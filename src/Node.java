@@ -11,16 +11,16 @@ public class Node {
         matrix = m;
         price = p;
         name = n;
-        previous_step = ps;
-        print();
+//        previous_step = ps;
+//        print();
     }
 
     private void print() {
-//        System.out.println("____" + name + "______________");
-//        for (int i = 0; i < matrix.length; i++) {
-//            System.out.println(Arrays.toString(matrix[i]));
-//        }
-//        System.out.println("______________________");
+        System.out.println("______" + name + "______");
+        for (int i = 0; i < matrix.length; i++) {
+            System.out.println(Arrays.toString(matrix[i]));
+        }
+        System.out.println("______________________");
     }
 
     public int[][] getMatrix() {

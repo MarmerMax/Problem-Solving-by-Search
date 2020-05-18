@@ -1,56 +1,60 @@
 import java.util.*;
 
-public class BFS extends Algorithm{
+public class BFS extends Algorithm {
 
-    private TilePuzzle tilePuzzle;
-    private int price;
-    private int nodesAmount;
-    private String path;
-    private double time;
+    private TilePuzzle tile_puzzle;
+    private int price = 0;
+    private int nodes_amount = 1;
+    private String path = "no path";
+    private double time = 0;
+
     private Queue<Node> queue;
 
-    public BFS(){
+    public BFS() {
         queue = new ArrayDeque<>();
     }
 
-    public void setTilePuzzle(TilePuzzle tp){
-        tilePuzzle = tp;
+    public void setTilePuzzle(TilePuzzle tp) {
+        tile_puzzle = tp;
+        double start = System.nanoTime();
+
+        checkIfPathExist();
+
+        double finish = System.nanoTime();
+        time = finish - start;
+        double second = 1000000000;
+        time /= second;
     }
 
-
-    @Override
-    public boolean findPath() {
-
-//        if(tilePuzzle.isGoal(start)){
-//            return "stay home";
-//        }
+    private boolean checkIfPathExist() {
+        if(tile_puzzle.isGoal(tile_puzzle.getRoot())){
+            return true;
+        }
 
         Set<Node> openList = new HashSet<>();
         Set<Node> closedList = new HashSet<>();
 
         ArrayList<ArrayList<Node>> allRoutes = new ArrayList<>();
         ArrayList<Node> root = new ArrayList<>();
-        root.add(tilePuzzle.getRoot());
+        root.add(tile_puzzle.getRoot());
         allRoutes.add(root);
 
-        queue.add(tilePuzzle.getRoot());
-        int count = 1;
+        queue.add(tile_puzzle.getRoot());
 
         while (!queue.isEmpty()) {
             Node current = queue.poll();
             openList.add(current);
 
-            ArrayList<Node> neighbours = tilePuzzle.createNodeNeighbours(current, closedList, openList);
-            count += neighbours.size();
+            ArrayList<Node> neighbours = tile_puzzle.createNodeNeighbours(current, closedList, openList);
+            nodes_amount += neighbours.size();
 
             for (Node neighbour : neighbours) {
                 if (!closedList.contains(neighbour) && !openList.contains(neighbour)) {
 
                     addToRoutes(current, neighbour, allRoutes);
 
-                    if (tilePuzzle.isGoal(neighbour)) {
-//                        path = buildPath(goal, allRoutes);
-//                        System.out.println(count);
+                    if (tile_puzzle.isGoal(neighbour)) {
+                        path = buildPath(allRoutes);
                         return true;
                     }
 
@@ -61,8 +65,6 @@ public class BFS extends Algorithm{
             closedList.add(current);
             openList.remove(current);
         }
-
-
 
         return false;
     }
@@ -91,32 +93,47 @@ public class BFS extends Algorithm{
         allRoutes.remove(index);
     }
 
-    private String buildPath(Node target, ArrayList<ArrayList<Node>> allRoutes) {
+    private String buildPath(ArrayList<ArrayList<Node>> allRoutes) {
         String path = "";
         ArrayList<Node> route;
         for (ArrayList<Node> currentRoute : allRoutes) {
-            if (currentRoute.get(currentRoute.size() - 1).equals(target)) {
+            if (tile_puzzle.isGoal(currentRoute.get(currentRoute.size() - 1))) {
                 route = new ArrayList<>(currentRoute);
                 for (Node node : route) {
-                    if (path.equals("")) {
-                        path = node.getName();
-                    } else {
-                        path = path + " -> " + node;
+                    if (node.getName() != null) {
+                        path = path + "-" + node.getName();
+                        price += node.getPrice();
                     }
                 }
                 break;
             }
         }
 
-        if (path.endsWith(" -> ")) {
-            path = path.substring(0, path.length() - 4);
+        if (path.startsWith("-")) {
+            path = path.substring(1);
         }
 
         return path;
     }
 
+    @Override
     public String getPath() {
         return path;
+    }
+
+    @Override
+    public String getTime() {
+        return Utils.round(time) + " seconds";
+    }
+
+    @Override
+    public int getPrice(){
+        return price;
+    }
+
+    @Override
+    public int getNodesAmount(){
+        return nodes_amount;
     }
 
 //    @Override

@@ -9,7 +9,6 @@ public class TilePuzzle {
     private Set<Integer> red_numbers;
 
     private Node root;
-    private int count = 1;
 
     public TilePuzzle(int[][] matrix, Set<Integer> bn, Set<Integer> rn) {
         initial_matrix = matrix;
@@ -29,22 +28,38 @@ public class TilePuzzle {
         Node right = createNeighbourByActionForNode(node, 'R');
         Node down = createNeighbourByActionForNode(node, 'D');
 
-        if (left != null && !closed_list.contains(left) && !open_list.contains(left)) neighbours.add(left);
-        if (up != null && !closed_list.contains(up) && !open_list.contains(up)) neighbours.add(up);
-        if (right != null && !closed_list.contains(right) && !open_list.contains(right)) neighbours.add(right);
-        if (down != null && !closed_list.contains(down) && !open_list.contains(down)) neighbours.add(down);
+        if (left != null && !closed_list.contains(left) && !open_list.contains(left)) {
+            if (!isMatrixAlreadyExists(left, closed_list, open_list)) {
+                neighbours.add(left);
+            }
+        }
+        if (up != null && !closed_list.contains(up) && !open_list.contains(up)) {
+            if (!isMatrixAlreadyExists(up, closed_list, open_list)) {
+                neighbours.add(up);
+            }
+        }
+        if (right != null && !closed_list.contains(right) && !open_list.contains(right)) {
+            if (!isMatrixAlreadyExists(right, closed_list, open_list)) {
+                neighbours.add(right);
+            }
+        }
+        if (down != null && !closed_list.contains(down) && !open_list.contains(down)) {
+            if (!isMatrixAlreadyExists(down, closed_list, open_list)) {
+                neighbours.add(down);
+            }
+        }
 
 //        if (left != null) neighbours.add(left);
 //        if (up != null) neighbours.add(up);
 //        if (right != null) neighbours.add(right);
 //        if (down != null) neighbours.add(down);
 
-        Collections.sort(neighbours, new Comparator<Node>() {
-            @Override
-            public int compare(Node n1, Node n2) {
-                return n1.getPrice() - n2.getPrice();
-            }
-        });
+//        Collections.sort(neighbours, new Comparator<Node>() {
+//            @Override
+//            public int compare(Node n1, Node n2) {
+//                return n1.getPrice() - n2.getPrice();
+//            }
+//        });
 //        for (Node n : neighbours) System.out.print(n.getPrice()+ " ");
 //        System.out.println();
 
@@ -67,7 +82,8 @@ public class TilePuzzle {
         //check if step is available and does not contradict to previous step
         switch (action) {
             case 'L': {
-                if (temp_column == 0 || node.getPreviousStep() == 'R') {
+//                if (temp_column == 0 || node.getPreviousStep() == 'R') {
+                if (temp_column == 0) {
                     return null;
                 }
                 step = 'R';
@@ -75,7 +91,8 @@ public class TilePuzzle {
                 break;
             }
             case 'U': {
-                if (temp_row == 0 || node.getPreviousStep() == 'D') {
+//                if (temp_row == 0 || node.getPreviousStep() == 'D') {
+                if (temp_row == 0) {
                     return null;
                 }
                 step = 'D';
@@ -83,7 +100,8 @@ public class TilePuzzle {
                 break;
             }
             case 'R': {
-                if (temp_column == node.getMatrix()[0].length - 1 || node.getPreviousStep() == 'L') {
+//                if (temp_column == node.getMatrix()[0].length - 1 || node.getPreviousStep() == 'L') {
+                if (temp_column == node.getMatrix()[0].length - 1) {
                     return null;
                 }
                 step = 'L';
@@ -91,7 +109,8 @@ public class TilePuzzle {
                 break;
             }
             case 'D': {
-                if (temp_row == node.getMatrix().length - 1 || node.getPreviousStep() == 'U') {
+//                if (temp_row == node.getMatrix().length - 1 || node.getPreviousStep() == 'U') {
+                if (temp_row == node.getMatrix().length - 1) {
                     return null;
                 }
                 step = 'U';
@@ -123,7 +142,6 @@ public class TilePuzzle {
         //create new node with new matrix, actual price and name
 //        System.out.println(price);
         Node temp = new Node(new_matrix, price, num + Character.toString(step), action);
-        count++;
         return temp;
     }
 
@@ -144,13 +162,27 @@ public class TilePuzzle {
     }
 
     public boolean isGoal(Node node) {
-        return checkMatrix(node.getMatrix());
+        return isEqualsMatrices(node.getMatrix(), correct_puzzle);
     }
 
-    private boolean checkMatrix(int[][] actual_matrix) {
-        for (int i = 0; i < actual_matrix.length; i++) {
-            for (int j = 0; j < actual_matrix[0].length; j++) {
-                if (actual_matrix[i][j] != correct_puzzle[i][j]) {
+    private boolean isMatrixAlreadyExists(Node node, Set<Node> closed_list, Set<Node> open_list) {
+        for (Node temp : closed_list) {
+            if (isEqualsMatrices(node.getMatrix(), temp.getMatrix())) {
+                return true;
+            }
+        }
+        for (Node temp : open_list) {
+            if (isEqualsMatrices(node.getMatrix(), temp.getMatrix())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isEqualsMatrices(int[][] m1, int[][] m2) {
+        for (int i = 0; i < m1.length; i++) {
+            for (int j = 0; j < m1[0].length; j++) {
+                if (m1[i][j] != m2[i][j]) {
                     return false;
                 }
             }
@@ -183,4 +215,5 @@ public class TilePuzzle {
     public Node getRoot() {
         return root;
     }
+
 }
