@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class Ex1 {
@@ -13,7 +11,8 @@ public class Ex1 {
 
         TilePuzzle tilePuzzle = inputReader.getTilePuzzle();
 
-        Algorithm algorithm = inputReader.getAlgorithm();
+//        Algorithm algorithm = inputReader.getAlgorithm();
+        Algorithm algorithm = new A();
         algorithm.setTilePuzzle(tilePuzzle);
 
         System.out.println(algorithm.getPath());

@@ -4,19 +4,17 @@ public class Node {
 
     private int[][] matrix;
     private int price;
+//    private int price_with_manhattan;
     private String name;
-    private char previous_step;
 
-    public Node(int[][] m, int p, String n, char ps) {
+    public Node(int[][] m, int p, String n) {
         matrix = m;
         price = p;
+//        price_with_manhattan = price;
         name = n;
-//        previous_step = ps;
-//        print();
     }
 
-    private void print() {
-        System.out.println("______" + name + "______");
+    public void print() {
         for (int i = 0; i < matrix.length; i++) {
             System.out.println(Arrays.toString(matrix[i]));
         }
@@ -47,7 +45,11 @@ public class Node {
         return null;
     }
 
-    public char getPreviousStep() {
-        return previous_step;
+    public void calculatePriceWithHeuristic(int manhattan) {
+        price += manhattan;
     }
+//
+//    public int getPriceWithManhattan() {
+//        return price_with_manhattan;
+//    }
 }

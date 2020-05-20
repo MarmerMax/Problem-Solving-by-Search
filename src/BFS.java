@@ -4,7 +4,7 @@ public class BFS extends Algorithm {
 
     private TilePuzzle tile_puzzle;
     private int price = 0;
-    private int nodes_amount = 1;
+    private int nodes_amount = 0;
     private String path = "no path";
     private double time = 0;
 
@@ -27,7 +27,7 @@ public class BFS extends Algorithm {
     }
 
     private boolean checkIfPathExist() {
-        if(tile_puzzle.isGoal(tile_puzzle.getRoot())){
+        if (tile_puzzle.isGoal(tile_puzzle.getRoot())) {
             return true;
         }
 
@@ -45,7 +45,7 @@ public class BFS extends Algorithm {
             Node current = queue.poll();
             openList.add(current);
 
-            ArrayList<Node> neighbours = tile_puzzle.createNodeNeighbours(current, closedList, openList);
+            ArrayList<Node> neighbours = tile_puzzle.createNodeNeighbours(current, closedList, openList, false);
             nodes_amount += neighbours.size();
 
             for (Node neighbour : neighbours) {
@@ -101,7 +101,7 @@ public class BFS extends Algorithm {
                 route = new ArrayList<>(currentRoute);
                 for (Node node : route) {
                     if (node.getName() != null) {
-                        path = path + "-" + node.getName();
+                        path += "-" + node.getName();
                         price += node.getPrice();
                     }
                 }
@@ -109,8 +109,8 @@ public class BFS extends Algorithm {
             }
         }
 
-        if (path.startsWith("-")) {
-            path = path.substring(1);
+        if (path.startsWith("-S-")) {
+            path = path.substring(3);
         }
 
         return path;
@@ -127,27 +127,13 @@ public class BFS extends Algorithm {
     }
 
     @Override
-    public int getPrice(){
+    public int getPrice() {
         return price;
     }
 
     @Override
-    public int getNodesAmount(){
+    public int getNodesAmount() {
         return nodes_amount;
     }
 
-//    @Override
-//    public int findNodeAmount() {
-//        return 0;
-//    }
-//
-//    @Override
-//    public int findCost() {
-//        return 0;
-//    }
-//
-//    @Override
-//    public double findTime() {
-//        return 0;
-//    }
 }

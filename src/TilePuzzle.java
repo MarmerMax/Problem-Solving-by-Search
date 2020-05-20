@@ -15,58 +15,86 @@ public class TilePuzzle {
         black_numbers = bn;
         red_numbers = rn;
 
-        createCorrectPuzzle(initial_matrix);
+        createCorrectPuzzle();
 
-        root = new Node(initial_matrix, 0, null, 'n');
+        root = new Node(initial_matrix, 0, "S");
     }
 
-    public ArrayList<Node> createNodeNeighbours(Node node, Set<Node> closed_list, Set<Node> open_list) {
+    public boolean isGoal(Node node) {
+        return Utils.isEqualsMatrices(node.getMatrix(), correct_puzzle);
+    }
+
+    public Node getRoot() {
+        return root;
+    }
+
+    public Set<Integer> getRedNumbers() {
+        return red_numbers;
+    }
+
+    public Set<Integer> getBlackNumbers() {
+        return red_numbers;
+    }
+
+    public int [][] getCorrectPuzzle() {
+        return correct_puzzle;
+    }
+
+    private void createCorrectPuzzle() {
+        int rows = initial_matrix.length;
+        int columns = initial_matrix[0].length;
+        correct_puzzle = new int[rows][columns];
+        int num = 1;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if ((i + 1) * (j + 1) == rows * columns) {
+                    correct_puzzle[i][j] = -1;
+                } else {
+                    correct_puzzle[i][j] = num++;
+                }
+            }
+        }
+    }
+
+
+    public ArrayList<Node> createNodeNeighbours(Node node, Set<Node> closed_list, Set<Node> open_list, boolean isHeuristic) {
         ArrayList<Node> neighbours = new ArrayList<>();
 
-        Node left = createNeighbourByActionForNode(node, 'L');
-        Node up = createNeighbourByActionForNode(node, 'U');
-        Node right = createNeighbourByActionForNode(node, 'R');
-        Node down = createNeighbourByActionForNode(node, 'D');
+        Node left = createNeighbourByActionForNode(node, 'L', isHeuristic);
+        Node up = createNeighbourByActionForNode(node, 'U', isHeuristic);
+        Node right = createNeighbourByActionForNode(node, 'R', isHeuristic);
+        Node down = createNeighbourByActionForNode(node, 'D', isHeuristic);
 
         if (left != null && !closed_list.contains(left) && !open_list.contains(left)) {
-            if (!isMatrixAlreadyExists(left, closed_list, open_list)) {
+            if (!Utils.checkIfNodeExistsInOpenOrClosed(left, closed_list, open_list)) {
                 neighbours.add(left);
             }
         }
         if (up != null && !closed_list.contains(up) && !open_list.contains(up)) {
-            if (!isMatrixAlreadyExists(up, closed_list, open_list)) {
+            if (!Utils.checkIfNodeExistsInOpenOrClosed(up, closed_list, open_list)) {
                 neighbours.add(up);
             }
         }
         if (right != null && !closed_list.contains(right) && !open_list.contains(right)) {
-            if (!isMatrixAlreadyExists(right, closed_list, open_list)) {
+            if (!Utils.checkIfNodeExistsInOpenOrClosed(right, closed_list, open_list)) {
                 neighbours.add(right);
             }
         }
         if (down != null && !closed_list.contains(down) && !open_list.contains(down)) {
-            if (!isMatrixAlreadyExists(down, closed_list, open_list)) {
+            if (!Utils.checkIfNodeExistsInOpenOrClosed(down, closed_list, open_list)) {
                 neighbours.add(down);
             }
         }
-
+//
 //        if (left != null) neighbours.add(left);
 //        if (up != null) neighbours.add(up);
 //        if (right != null) neighbours.add(right);
 //        if (down != null) neighbours.add(down);
 
-//        Collections.sort(neighbours, new Comparator<Node>() {
-//            @Override
-//            public int compare(Node n1, Node n2) {
-//                return n1.getPrice() - n2.getPrice();
-//            }
-//        });
-//        for (Node n : neighbours) System.out.print(n.getPrice()+ " ");
-//        System.out.println();
-
         return neighbours;
     }
 
-    private Node createNeighbourByActionForNode(Node node, char action) {
+    private Node createNeighbourByActionForNode(Node node, char action, boolean isHeuristic) {
         int[] place = node.getSpaceIndexes();
         int row = place[0];
         int column = place[1];
@@ -82,39 +110,35 @@ public class TilePuzzle {
         //check if step is available and does not contradict to previous step
         switch (action) {
             case 'L': {
-//                if (temp_column == 0 || node.getPreviousStep() == 'R') {
-                if (temp_column == 0) {
-                    return null;
-                }
-                step = 'R';
-                temp_column -= 1;
-                break;
-            }
-            case 'U': {
-//                if (temp_row == 0 || node.getPreviousStep() == 'D') {
-                if (temp_row == 0) {
-                    return null;
-                }
-                step = 'D';
-                temp_row -= 1;
-                break;
-            }
-            case 'R': {
-//                if (temp_column == node.getMatrix()[0].length - 1 || node.getPreviousStep() == 'L') {
-                if (temp_column == node.getMatrix()[0].length - 1) {
+                if (column == node.getMatrix()[0].length - 1 || node.getName().endsWith("R")) {
                     return null;
                 }
                 step = 'L';
                 temp_column += 1;
                 break;
             }
-            case 'D': {
-//                if (temp_row == node.getMatrix().length - 1 || node.getPreviousStep() == 'U') {
-                if (temp_row == node.getMatrix().length - 1) {
+            case 'U': {
+                if (row == node.getMatrix().length - 1 || node.getName().endsWith("D")) {
                     return null;
                 }
                 step = 'U';
                 temp_row += 1;
+                break;
+            }
+            case 'R': {
+                if (column == 0 || node.getName().endsWith("L")) {
+                    return null;
+                }
+                step = 'R';
+                temp_column -= 1;
+                break;
+            }
+            case 'D': {
+                if (row == 0 || node.getName().endsWith("U")) {
+                    return null;
+                }
+                step = 'D';
+                temp_row -= 1;
                 break;
             }
             default: {
@@ -127,72 +151,30 @@ public class TilePuzzle {
             return null;
         }
 
+        //create matrix with moved space
+        int[][] new_matrix = swap(node.getMatrix(), row, column, temp_row, temp_column);
+
         int price = 1;
         //check price of moved number
         if (red_numbers != null && red_numbers.contains(node.getMatrix()[temp_row][temp_column])) {
             price = 30;
         }
 
-        //create matrix with moved space
-        int[][] new_matrix = swap(node.getMatrix(), row, column, temp_row, temp_column);
+        //if this node need to add heuristic price
+        if(isHeuristic){
+            price += Utils.manhattanFunction(new_matrix, red_numbers, black_numbers);
+        }
 
         //choose number that was moved
         int num = node.getMatrix()[temp_row][temp_column];
 
         //create new node with new matrix, actual price and name
-//        System.out.println(price);
-        Node temp = new Node(new_matrix, price, num + Character.toString(step), action);
+        Node temp = new Node(new_matrix, price, num + Character.toString(step));
         return temp;
     }
 
-    private void createCorrectPuzzle(int[][] matrix) {
-        int rows = matrix.length;
-        int columns = matrix[0].length;
-        correct_puzzle = new int[rows][columns];
-        int num = 1;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                if ((i + 1) * (j + 1) == rows * columns) {
-                    correct_puzzle[i][j] = -1;
-                } else {
-                    correct_puzzle[i][j] = num++;
-                }
-            }
-        }
-    }
-
-    public boolean isGoal(Node node) {
-        return isEqualsMatrices(node.getMatrix(), correct_puzzle);
-    }
-
-    private boolean isMatrixAlreadyExists(Node node, Set<Node> closed_list, Set<Node> open_list) {
-        for (Node temp : closed_list) {
-            if (isEqualsMatrices(node.getMatrix(), temp.getMatrix())) {
-                return true;
-            }
-        }
-        for (Node temp : open_list) {
-            if (isEqualsMatrices(node.getMatrix(), temp.getMatrix())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isEqualsMatrices(int[][] m1, int[][] m2) {
-        for (int i = 0; i < m1.length; i++) {
-            for (int j = 0; j < m1[0].length; j++) {
-                if (m1[i][j] != m2[i][j]) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 
     private int[][] swap(int[][] matrix, int i, int j, int ti, int tj) {
-
-//        System.out.println(count + ") " + i + ", " + j + " -> " + ti + ", " + tj);
         int[][] new_mat = copyMatrix(matrix);
 
         int temp = new_mat[ti][tj];
@@ -211,9 +193,4 @@ public class TilePuzzle {
         }
         return new_mat;
     }
-
-    public Node getRoot() {
-        return root;
-    }
-
 }
