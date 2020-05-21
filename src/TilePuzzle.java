@@ -4,30 +4,61 @@ public class TilePuzzle {
 
     public static final int RED_PRICE = 30;
 
-    private int[][] correct_puzzle;
-    private Set<Integer> black_numbers;
-    private Set<Integer> red_numbers;
+    private static Set<Integer> black_numbers;
+    private static Set<Integer> red_numbers;
     private Node root;
+    private Node goal;
 
     public TilePuzzle(int[][] matrix, Set<Integer> bn, Set<Integer> rn) {
+        int[][] correct_puzzle = createCorrectPuzzle(matrix);
+
         black_numbers = bn;
         red_numbers = rn;
         root = new Node(matrix, 0, "", red_numbers);
+        goal = new Node(correct_puzzle, 0, "", red_numbers);
+    }
 
-        createCorrectPuzzle();
 
+    public static boolean isGoal(Node node, Node target) {
+        return Matrix.isEqualsMatrices(node.getMatrix(), target.getMatrix());
+    }
+
+    public Node getRoot() {
+        return root;
+    }
+
+    public Node getGoal() {
+        return goal;
+    }
+
+    //create goal matrix
+    private int[][] createCorrectPuzzle(int[][] mat) {
+        int rows = mat.length;
+        int columns = mat[0].length;
+        int[][] matrix = new int[rows][columns];
+        int num = 1;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if ((i + 1) * (j + 1) == rows * columns) {
+                    matrix[i][j] = -1;
+                } else {
+                    matrix[i][j] = num++;
+                }
+            }
+        }
+        return matrix;
     }
 
     //if exists a black number that is not in its row or column then there is no solution
-    public boolean isPathExist() {
-        if(black_numbers == null){
+    public static boolean isPathExist(Node node) {
+        if (black_numbers == null) {
             return true;
         }
         for (int temp : black_numbers) {
-            for (int i = 0; i < root.getMatrix().length; i++) {
-                for (int j = 0; j < root.getMatrix()[0].length; j++) {
-                    int goal_row = (temp - 1) / root.getMatrix()[0].length;
-                    int goal_column = (temp - 1) % root.getMatrix()[0].length;
+            for (int i = 0; i < node.getMatrix().length; i++) {
+                for (int j = 0; j < node.getMatrix()[0].length; j++) {
+                    int goal_row = (temp - 1) / node.getMatrix()[0].length;
+                    int goal_column = (temp - 1) % node.getMatrix()[0].length;
                     int steps = Math.abs(goal_column - j) + Math.abs(goal_row - i);
                     if (steps > 0) {
                         return false;
@@ -38,44 +69,8 @@ public class TilePuzzle {
         return true;
     }
 
-    public boolean isGoal(Node node) {
-        return Matrix.isEqualsMatrices(node.getMatrix(), correct_puzzle);
-    }
-
-    public Node getRoot() {
-        return root;
-    }
-
-    public Set<Integer> getRedNumbers() {
-        return red_numbers;
-    }
-
-    public Set<Integer> getBlackNumbers() {
-        return red_numbers;
-    }
-
-    public int[][] getCorrectPuzzle() {
-        return correct_puzzle;
-    }
-
-    private void createCorrectPuzzle() {
-        int rows = root.getMatrix().length;
-        int columns = root.getMatrix()[0].length;
-        correct_puzzle = new int[rows][columns];
-        int num = 1;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                if ((i + 1) * (j + 1) == rows * columns) {
-                    correct_puzzle[i][j] = -1;
-                } else {
-                    correct_puzzle[i][j] = num++;
-                }
-            }
-        }
-    }
-
-
-    public ArrayList<Node> createNodeNeighbours(Node node) {
+    //create all neighbors of node
+    public static ArrayList<Node> createNodeNeighbours(Node node) {
         ArrayList<Node> neighbours = new ArrayList<>();
 
         Node left = createNeighbourByActionForNode(node, 'L');
@@ -91,7 +86,8 @@ public class TilePuzzle {
         return neighbours;
     }
 
-    private Node createNeighbourByActionForNode(Node node, char action) {
+    //create neighbour by actual action of moving
+    private static Node createNeighbourByActionForNode(Node node, char action) {
         int[] place = node.getSpaceIndexes();
         int row = place[0];
         int column = place[1];
@@ -104,7 +100,7 @@ public class TilePuzzle {
         int temp_column = column;
         char step = 'n';
 
-        //check if step is available and does not contradict to previous step
+        //check if the step is available and does not contradict to previous step
         switch (action) {
             case 'L': {
                 if (column == node.getMatrix()[0].length - 1 || node.getName().endsWith("R")) {
@@ -143,7 +139,7 @@ public class TilePuzzle {
             }
         }
 
-        //can't move black number
+        //if number that function have to move is black return null
         if (black_numbers != null && black_numbers.contains(node.getMatrix()[temp_row][temp_column])) {
             return null;
         }
@@ -154,7 +150,7 @@ public class TilePuzzle {
             price = 30;
         }
 
-        //create matrix with moved space
+        //create matrix with moved space (matrix with moved number)
         int[][] new_matrix = Matrix.swap(node.getMatrix(), row, column, temp_row, temp_column);
 
         //choose number that was moved
@@ -164,7 +160,4 @@ public class TilePuzzle {
         Node temp = new Node(new_matrix, node.getPrice() + price, node.getName() + "-" + num + Character.toString(step), red_numbers);
         return temp;
     }
-
-
-
 }

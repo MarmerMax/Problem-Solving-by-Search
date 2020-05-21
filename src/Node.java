@@ -8,6 +8,12 @@ public class Node {
     private int heuristic_price;
     private String name;
 
+    /**
+     * @param m - initial matrix for Node
+     * @param p - price of action
+     * @param n - name (actual path to this node)
+     * @param rn - red numbers set for create the right heuristic price
+     */
     public Node(int[][] m, int p, String n, Set<Integer> rn) {
         matrix = m;
         price = p;
@@ -41,6 +47,7 @@ public class Node {
         return heuristic_price;
     }
 
+    //find place of space
     public int[] getSpaceIndexes() {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {

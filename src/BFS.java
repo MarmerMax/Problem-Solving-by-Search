@@ -2,10 +2,9 @@ import java.util.*;
 
 public class BFS extends Algorithm {
 
-    private TilePuzzle tile_puzzle;
-    private int price = 0;
-    private int nodes_amount = 0;
-    private String path = "no path";
+    private int price;
+    private int nodes_amount;
+    private String path;
     private double time = 0;
 
     private Queue<Node> queue;
@@ -14,39 +13,52 @@ public class BFS extends Algorithm {
         queue = new ArrayDeque<>();
     }
 
-    public void setTilePuzzle(TilePuzzle tp) {
-        tile_puzzle = tp;
-        double start = System.nanoTime();
-        checkIfPathExist();
-        double finish = System.nanoTime();
-        time = finish - start;
-        double second = 1000000000;
-        time /= second;
-    }
+    /**
+     * BFS(Node start, Vector goal)
+     * 1. L  make_queue (start) and make_hash_table
+     * 2. C  make_hash_table
+     * 3. While L not empty loop
+     *      1. n  L.remove_front
+     *      2. C  n
+     *      3. For each allowed operator on n
+     *          1. g  operator(n)
+     *          2. If g not in C and not in L
+     *              1. If goal(g) return path(g)
+     *              2. L.insert (g)
+     * 4. Return false
+     **/
 
-    private boolean checkIfPathExist() {
-        if (tile_puzzle.isGoal(tile_puzzle.getRoot())) {
+    private boolean checkIfPathExist(Node start, Node goal) {
+        if (TilePuzzle.isGoal(start, goal)) {
+            path = "";
             return true;
+        }
+
+        //check if black numbers not in right place
+        if (!TilePuzzle.isPathExist(start)) {
+            return false;
         }
 
         Set<Node> openList = new HashSet<>();
         Set<Node> closedList = new HashSet<>();
 
-        queue.add(tile_puzzle.getRoot());
+        queue.add(start);
+        openList.add(start);
 
         while (!queue.isEmpty()) {
-            Node current = queue.poll();
-            openList.add(current);
 
-            ArrayList<Node> neighbours = tile_puzzle.createNodeNeighbours(current);
+            Node current = queue.poll();
+            openList.remove(current);
+
+            ArrayList<Node> neighbours = TilePuzzle.createNodeNeighbours(current);
             nodes_amount += neighbours.size();
 
             for (Node neighbour : neighbours) {
                 if (!closedList.contains(neighbour) && !openList.contains(neighbour)) {
 
 
-                    if (tile_puzzle.isGoal(neighbour)) {
-                        path = Path.buildPath(neighbour);
+                    if (TilePuzzle.isGoal(neighbour, goal)) {
+                        path = neighbour.getName();
                         price = neighbour.getPrice();
                         return true;
                     }
@@ -59,6 +71,22 @@ public class BFS extends Algorithm {
         }
 
         return false;
+    }
+
+    @Override
+    public void checkTilePuzzle(TilePuzzle tp) {
+        double start = System.nanoTime();
+        if (checkIfPathExist(tp.getRoot(), tp.getGoal())) {
+            path = Path.buildPath(path);
+        } else {
+            path = "no path";
+            price = 0;
+            nodes_amount = 0;
+        }
+        double finish = System.nanoTime();
+        time = finish - start;
+        double second = 1000000000;
+        time /= second;
     }
 
     @Override

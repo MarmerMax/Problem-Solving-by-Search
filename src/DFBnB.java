@@ -1,7 +1,7 @@
 public class DFBnB extends Algorithm{
 
     @Override
-    public void setTilePuzzle(TilePuzzle tp) {
+    public void checkTilePuzzle(TilePuzzle tp) {
 
     }
 

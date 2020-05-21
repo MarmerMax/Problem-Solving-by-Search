@@ -2,11 +2,9 @@ import java.util.*;
 
 public class A extends Algorithm {
 
-    private TilePuzzle tile_puzzle;
-
-    private int price = 0;
-    private int nodes_amount = 0;
-    private String path = "no path";
+    private int price;
+    private int nodes_amount;
+    private String path;
     private double time = 0;
 
     private Queue<Node> queue;
@@ -38,37 +36,37 @@ public class A extends Algorithm {
      * 4. Return false
      */
 
-    private boolean checkIfPathExist() {
-        if (tile_puzzle.isGoal(tile_puzzle.getRoot())) {
+    private boolean checkIfPathExist(Node start, Node goal) {
+        if (TilePuzzle.isGoal(start, goal)) {
             path = "";
             return true;
         }
 
         //check if black numbers not in right place
-        if (!tile_puzzle.isPathExist()) {
+        if (!TilePuzzle.isPathExist(start)) {
             return false;
         }
 
         Set<Node> openList = new HashSet<>();
         Set<Node> closedList = new HashSet<>();
 
-        queue.add(tile_puzzle.getRoot());
-        openList.add(tile_puzzle.getRoot());
+        queue.add(start);
+        openList.add(start);
 
         while (!queue.isEmpty()) {
 
             Node current = queue.poll();
             openList.remove(current);
 
-            if (tile_puzzle.isGoal(current)) {
-                path = Path.buildPath(current);
+            if (TilePuzzle.isGoal(current, goal)) {
+                path = current.getName();
                 price = current.getPrice();
                 return true;
             }
 
             closedList.add(current);
 
-            ArrayList<Node> neighbours = tile_puzzle.createNodeNeighbours(current);
+            ArrayList<Node> neighbours = TilePuzzle.createNodeNeighbours(current);
             nodes_amount += neighbours.size();
 
             for (Node neighbour : neighbours) {
@@ -87,10 +85,15 @@ public class A extends Algorithm {
     }
 
     @Override
-    public void setTilePuzzle(TilePuzzle tp) {
-        tile_puzzle = tp;
+    public void checkTilePuzzle(TilePuzzle tp) {
         double start = System.nanoTime();
-        checkIfPathExist();
+        if (checkIfPathExist(tp.getRoot(), tp.getGoal())) {
+            path = Path.buildPath(path);
+        } else {
+            path = "no path";
+            price = 0;
+            nodes_amount = 0;
+        }
         double finish = System.nanoTime();
         time = finish - start;
         double second = 1000000000;

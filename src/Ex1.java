@@ -10,8 +10,9 @@ public class Ex1 {
         TilePuzzle tilePuzzle = inputReader.getTilePuzzle();
 
 //        Algorithm algorithm = inputReader.getAlgorithm();
-        Algorithm algorithm = new A();
-        algorithm.setTilePuzzle(tilePuzzle);
+//        Algorithm algorithm = new A();
+        Algorithm algorithm = new DFID();
+        algorithm.checkTilePuzzle(tilePuzzle);
 
         System.out.println(algorithm.getPath());
         System.out.println(algorithm.getPrice());

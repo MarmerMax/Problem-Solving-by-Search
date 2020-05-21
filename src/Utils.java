@@ -6,8 +6,7 @@ import java.util.Set;
 
 public class Utils {
 
-
-
+    //return number with only 3 digits after dot (example: 0.1023423 -> 0.102)
     public static double round(double value) {
         int places = 3;
         if (places < 0) throw new IllegalArgumentException();
@@ -18,20 +17,25 @@ public class Utils {
         return (double) tmp / factor;
     }
 
-    public static boolean checkIfNodeExistsInOpenOrClosed(Node node, Set<Node> set1, Set<Node> set2) {
-        for (Node temp : set1) {
-            if (Matrix.isEqualsMatrices(node.getMatrix(), temp.getMatrix())) {
-                return true;
-            }
-        }
-        for (Node temp : set2) {
-            if (Matrix.isEqualsMatrices(node.getMatrix(), temp.getMatrix())) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    public static boolean checkIfNodeExistsInOpenOrClosed(Node node, Set<Node> set1, Set<Node> set2) {
+//        for (Node temp : set1) {
+//            if (Matrix.isEqualsMatrices(node.getMatrix(), temp.getMatrix())) {
+//                return true;
+//            }
+//        }
+//        for (Node temp : set2) {
+//            if (Matrix.isEqualsMatrices(node.getMatrix(), temp.getMatrix())) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
+    //Check if node exists in set (open list or closed list) by checking the matrix only.
+    //Default contains methods of set will return false because it check similarity by all variables of object.
+    //In my implementation of Node all Node store not only matrix so if two matrices will have
+    //same numbers places it will also check their other variables and it can be problematic and can return false
+    //even if their matrices same. So this function resolve this problem.
     public static boolean checkIfNodeExistsInList(Node node, Set<Node> set) {
         for (Node temp : set) {
             if (Matrix.isEqualsMatrices(node.getMatrix(), temp.getMatrix())) {
@@ -41,6 +45,7 @@ public class Utils {
         return false;
     }
 
+    //Check if queue contains node with higher price and change it by cheaper node
     public static Queue<Node> changeBetweenNodesInQueue(Queue<Node> queue, Set<Node> open_list, Node node) {
         int size = queue.size();
 
@@ -71,10 +76,14 @@ public class Utils {
         return new_queue;
     }
 
+
+    //This function calculates the steps that the algorithm must take to change the matrix to the correct state
     public static int manhattanFunction(int[][] actual, Set<Integer> red_numbers) {
 
+        //array with steps to each number (can be useful in feature)
         int[] all_steps = new int[actual.length * actual[0].length];
 
+        //general steps
         int distance = 0;
 
         for (int i = 0; i < actual.length; i++) {

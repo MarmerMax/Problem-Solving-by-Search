@@ -1,9 +1,9 @@
 
 public class Path {
-    public static String buildPath(Node node){
+    public static String buildPath(String path){
         String p = "";
-        if (node.getName().startsWith("-")) {
-            p = node.getName().substring(1);
+        if (path.startsWith("-")) {
+            p = path.substring(1);
         }
         return p;
     }
