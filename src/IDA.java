@@ -1,22 +1,27 @@
-public class IDA implements Searchable {
+public class IDA extends Algorithm {
 
     @Override
-    public boolean findPath(Node start, Node goal) {
-        return false;
+    public void setTilePuzzle(TilePuzzle tp) {
+
     }
 
     @Override
-    public int findNodeAmount() {
+    public String getPath() {
+        return null;
+    }
+
+    @Override
+    public int getPrice() {
         return 0;
     }
 
     @Override
-    public int findCost() {
+    public int getNodesAmount() {
         return 0;
     }
 
     @Override
-    public double findTime() {
-        return 0;
+    public String getTime() {
+        return null;
     }
 }

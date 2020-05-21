@@ -2,26 +2,44 @@ import java.util.*;
 
 public class TilePuzzle {
 
-    private int[][] correct_puzzle;
+    public static final int RED_PRICE = 30;
 
-    private int[][] initial_matrix;
+    private int[][] correct_puzzle;
     private Set<Integer> black_numbers;
     private Set<Integer> red_numbers;
-
     private Node root;
 
     public TilePuzzle(int[][] matrix, Set<Integer> bn, Set<Integer> rn) {
-        initial_matrix = matrix;
         black_numbers = bn;
         red_numbers = rn;
+        root = new Node(matrix, 0, "", red_numbers);
 
         createCorrectPuzzle();
 
-        root = new Node(initial_matrix, 0, "S");
+    }
+
+    //if exists a black number that is not in its row or column then there is no solution
+    public boolean isPathExist() {
+        if(black_numbers == null){
+            return true;
+        }
+        for (int temp : black_numbers) {
+            for (int i = 0; i < root.getMatrix().length; i++) {
+                for (int j = 0; j < root.getMatrix()[0].length; j++) {
+                    int goal_row = (temp - 1) / root.getMatrix()[0].length;
+                    int goal_column = (temp - 1) % root.getMatrix()[0].length;
+                    int steps = Math.abs(goal_column - j) + Math.abs(goal_row - i);
+                    if (steps > 0) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public boolean isGoal(Node node) {
-        return Utils.isEqualsMatrices(node.getMatrix(), correct_puzzle);
+        return Matrix.isEqualsMatrices(node.getMatrix(), correct_puzzle);
     }
 
     public Node getRoot() {
@@ -36,13 +54,13 @@ public class TilePuzzle {
         return red_numbers;
     }
 
-    public int [][] getCorrectPuzzle() {
+    public int[][] getCorrectPuzzle() {
         return correct_puzzle;
     }
 
     private void createCorrectPuzzle() {
-        int rows = initial_matrix.length;
-        int columns = initial_matrix[0].length;
+        int rows = root.getMatrix().length;
+        int columns = root.getMatrix()[0].length;
         correct_puzzle = new int[rows][columns];
         int num = 1;
         for (int i = 0; i < rows; i++) {
@@ -57,44 +75,23 @@ public class TilePuzzle {
     }
 
 
-    public ArrayList<Node> createNodeNeighbours(Node node, Set<Node> closed_list, Set<Node> open_list, boolean isHeuristic) {
+    public ArrayList<Node> createNodeNeighbours(Node node) {
         ArrayList<Node> neighbours = new ArrayList<>();
 
-        Node left = createNeighbourByActionForNode(node, 'L', isHeuristic);
-        Node up = createNeighbourByActionForNode(node, 'U', isHeuristic);
-        Node right = createNeighbourByActionForNode(node, 'R', isHeuristic);
-        Node down = createNeighbourByActionForNode(node, 'D', isHeuristic);
+        Node left = createNeighbourByActionForNode(node, 'L');
+        Node up = createNeighbourByActionForNode(node, 'U');
+        Node right = createNeighbourByActionForNode(node, 'R');
+        Node down = createNeighbourByActionForNode(node, 'D');
 
-        if (left != null && !closed_list.contains(left) && !open_list.contains(left)) {
-            if (!Utils.checkIfNodeExistsInOpenOrClosed(left, closed_list, open_list)) {
-                neighbours.add(left);
-            }
-        }
-        if (up != null && !closed_list.contains(up) && !open_list.contains(up)) {
-            if (!Utils.checkIfNodeExistsInOpenOrClosed(up, closed_list, open_list)) {
-                neighbours.add(up);
-            }
-        }
-        if (right != null && !closed_list.contains(right) && !open_list.contains(right)) {
-            if (!Utils.checkIfNodeExistsInOpenOrClosed(right, closed_list, open_list)) {
-                neighbours.add(right);
-            }
-        }
-        if (down != null && !closed_list.contains(down) && !open_list.contains(down)) {
-            if (!Utils.checkIfNodeExistsInOpenOrClosed(down, closed_list, open_list)) {
-                neighbours.add(down);
-            }
-        }
-//
-//        if (left != null) neighbours.add(left);
-//        if (up != null) neighbours.add(up);
-//        if (right != null) neighbours.add(right);
-//        if (down != null) neighbours.add(down);
+        if (left != null) neighbours.add(left);
+        if (up != null) neighbours.add(up);
+        if (right != null) neighbours.add(right);
+        if (down != null) neighbours.add(down);
 
         return neighbours;
     }
 
-    private Node createNeighbourByActionForNode(Node node, char action, boolean isHeuristic) {
+    private Node createNeighbourByActionForNode(Node node, char action) {
         int[] place = node.getSpaceIndexes();
         int row = place[0];
         int column = place[1];
@@ -151,46 +148,23 @@ public class TilePuzzle {
             return null;
         }
 
-        //create matrix with moved space
-        int[][] new_matrix = swap(node.getMatrix(), row, column, temp_row, temp_column);
-
         int price = 1;
         //check price of moved number
         if (red_numbers != null && red_numbers.contains(node.getMatrix()[temp_row][temp_column])) {
             price = 30;
         }
 
-        //if this node need to add heuristic price
-        if(isHeuristic){
-            price += Utils.manhattanFunction(new_matrix, red_numbers, black_numbers);
-        }
+        //create matrix with moved space
+        int[][] new_matrix = Matrix.swap(node.getMatrix(), row, column, temp_row, temp_column);
 
         //choose number that was moved
         int num = node.getMatrix()[temp_row][temp_column];
 
         //create new node with new matrix, actual price and name
-        Node temp = new Node(new_matrix, price, num + Character.toString(step));
+        Node temp = new Node(new_matrix, node.getPrice() + price, node.getName() + "-" + num + Character.toString(step), red_numbers);
         return temp;
     }
 
 
-    private int[][] swap(int[][] matrix, int i, int j, int ti, int tj) {
-        int[][] new_mat = copyMatrix(matrix);
 
-        int temp = new_mat[ti][tj];
-        new_mat[i][j] = temp;
-        new_mat[ti][tj] = -1;
-
-        return new_mat;
-    }
-
-    private int[][] copyMatrix(int[][] matrix) {
-        int[][] new_mat = new int[matrix.length][matrix[0].length];
-        for (int i = 0; i < new_mat.length; i++) {
-            for (int j = 0; j < new_mat[0].length; j++) {
-                new_mat[i][j] = matrix[i][j];
-            }
-        }
-        return new_mat;
-    }
 }

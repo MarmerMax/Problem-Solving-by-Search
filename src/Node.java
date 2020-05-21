@@ -1,20 +1,24 @@
 import java.util.Arrays;
+import java.util.Set;
 
 public class Node {
 
     private int[][] matrix;
     private int price;
-//    private int price_with_manhattan;
+    private int heuristic_price;
     private String name;
 
-    public Node(int[][] m, int p, String n) {
+    public Node(int[][] m, int p, String n, Set<Integer> rn) {
         matrix = m;
         price = p;
-//        price_with_manhattan = price;
+        heuristic_price = Utils.manhattanFunction(m, rn);
         name = n;
+//        print();
     }
 
     public void print() {
+        System.out.println("name: " + name);
+        System.out.println("price: " + price);
         for (int i = 0; i < matrix.length; i++) {
             System.out.println(Arrays.toString(matrix[i]));
         }
@@ -33,6 +37,10 @@ public class Node {
         return price;
     }
 
+    public int getHeuristicPrice() {
+        return heuristic_price;
+    }
+
     public int[] getSpaceIndexes() {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
@@ -44,12 +52,4 @@ public class Node {
         }
         return null;
     }
-
-    public void calculatePriceWithHeuristic(int manhattan) {
-        price += manhattan;
-    }
-//
-//    public int getPriceWithManhattan() {
-//        return price_with_manhattan;
-//    }
 }

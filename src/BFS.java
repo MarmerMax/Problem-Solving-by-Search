@@ -17,9 +17,7 @@ public class BFS extends Algorithm {
     public void setTilePuzzle(TilePuzzle tp) {
         tile_puzzle = tp;
         double start = System.nanoTime();
-
         checkIfPathExist();
-
         double finish = System.nanoTime();
         time = finish - start;
         double second = 1000000000;
@@ -34,86 +32,33 @@ public class BFS extends Algorithm {
         Set<Node> openList = new HashSet<>();
         Set<Node> closedList = new HashSet<>();
 
-        ArrayList<ArrayList<Node>> allRoutes = new ArrayList<>();
-        ArrayList<Node> root = new ArrayList<>();
-        root.add(tile_puzzle.getRoot());
-        allRoutes.add(root);
-
         queue.add(tile_puzzle.getRoot());
 
         while (!queue.isEmpty()) {
             Node current = queue.poll();
             openList.add(current);
 
-            ArrayList<Node> neighbours = tile_puzzle.createNodeNeighbours(current, closedList, openList, false);
+            ArrayList<Node> neighbours = tile_puzzle.createNodeNeighbours(current);
             nodes_amount += neighbours.size();
 
             for (Node neighbour : neighbours) {
                 if (!closedList.contains(neighbour) && !openList.contains(neighbour)) {
 
-                    addToRoutes(current, neighbour, allRoutes);
 
                     if (tile_puzzle.isGoal(neighbour)) {
-                        path = buildPath(allRoutes);
+                        path = Path.buildPath(neighbour);
+                        price = neighbour.getPrice();
                         return true;
                     }
 
                     queue.add(neighbour);
                 }
             }
-            removeOldRoute(current, allRoutes);
             closedList.add(current);
             openList.remove(current);
         }
 
         return false;
-    }
-
-    private void addToRoutes(Node current, Node next, ArrayList<ArrayList<Node>> allRoutes) {
-        ArrayList<Node> newRoute;
-        for (ArrayList<Node> currentRoute : allRoutes) {
-            if (currentRoute.get(currentRoute.size() - 1).equals(current)) {
-                newRoute = new ArrayList<>(currentRoute);
-                newRoute.add(next);
-                allRoutes.add(newRoute);
-                break;
-            }
-        }
-    }
-
-    private void removeOldRoute(Node current, ArrayList<ArrayList<Node>> allRoutes) {
-        int index = 0;
-        for (ArrayList<Node> currentPath : allRoutes) {
-            if (currentPath.get(currentPath.size() - 1).equals(current)) {
-                break;
-            } else {
-                index++;
-            }
-        }
-        allRoutes.remove(index);
-    }
-
-    private String buildPath(ArrayList<ArrayList<Node>> allRoutes) {
-        String path = "";
-        ArrayList<Node> route;
-        for (ArrayList<Node> currentRoute : allRoutes) {
-            if (tile_puzzle.isGoal(currentRoute.get(currentRoute.size() - 1))) {
-                route = new ArrayList<>(currentRoute);
-                for (Node node : route) {
-                    if (node.getName() != null) {
-                        path += "-" + node.getName();
-                        price += node.getPrice();
-                    }
-                }
-                break;
-            }
-        }
-
-        if (path.startsWith("-S-")) {
-            path = path.substring(3);
-        }
-
-        return path;
     }
 
     @Override

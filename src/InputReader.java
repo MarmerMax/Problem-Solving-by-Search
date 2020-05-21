@@ -112,19 +112,19 @@ public class InputReader {
                 break;
             }
             case "IDA": {
-//                algorithm = new IDA();
+                algorithm = new IDA();
                 break;
             }
             case "A": {
-//                algorithm = new A();
+                algorithm = new A();
                 break;
             }
             case "DFID": {
-//                algorithm = new DFID();
+                algorithm = new DFID();
                 break;
             }
             case "DFBnB": {
-//                algorithm = new DFBnB();
+                algorithm = new DFBnB();
                 break;
             }
             default: {
