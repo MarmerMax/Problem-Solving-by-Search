@@ -4,12 +4,9 @@ import java.util.Set;
 
 public class DFID extends Algorithm {
 
-    private int price;
-    private int nodes_amount;
-    private String path;
-    private double time = 0;
-
-    public DFID() {}
+    public DFID() {
+        super();
+    }
 
     /**
      * DFID(Node start, Vector Goals)
@@ -33,25 +30,15 @@ public class DFID extends Algorithm {
      *              1. isCutoff  true
      *          5. Else if result ≠ fail
      *              1. return result
-     *      4. H.remove(n) //the memory for n should be also released
+     * 4. H.remove(n) //the memory for n should be also released
      * 5. If isCutoff = true
      *      1. return cutoff
      * 6. Else
      *      1. return fail
      **/
 
-
-    private boolean checkIfPathExist(Node start, Node goal) {
-        if (TilePuzzle.isGoal(start, goal)) {
-            path = "";
-            return true;
-        }
-
-        //check if black numbers not in right place
-        if (!TilePuzzle.isPathExist(start)) {
-            return false;
-        }
-
+    @Override
+    protected boolean checkIfPathExist(Node start, Node goal) {
         for (int depth = 0; depth < Integer.MAX_VALUE; depth++) {
             Set<Node> loop_avoidance_list = new HashSet<>();
             Node temp = Limited_DFS(start, goal, depth, loop_avoidance_list);
@@ -65,62 +52,34 @@ public class DFID extends Algorithm {
     }
 
     private Node Limited_DFS(Node current, Node goal, int limit, Set<Node> loop_avoidance_list) {
-        if (TilePuzzle.isGoal(current, goal)) {
+        if (Matrix.isEqualsMatrices(current.getMatrix(), goal.getMatrix())) {
             return current;
         } else if (limit == 0) {
             return null;
         } else {
 
             loop_avoidance_list.add(current);
-            ArrayList<Node> neighbours = TilePuzzle.createNodeNeighbours(current);
-            nodes_amount += neighbours.size();
 
-            for (Node neighbour : neighbours) {
-                if (!Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list)) {
-                    Node temp = Limited_DFS(neighbour, goal, limit - 1, loop_avoidance_list);
-                    if (temp != null) {
-                        return temp;
+            char[] actions = {'L', 'U', 'R', 'D'};
+
+            for (char action : actions) {
+
+                Node neighbour = TilePuzzle.createNeighbourByActionForNode(current, action);
+
+                if(neighbour != null){
+                    nodes_amount++;
+
+                    if (!Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list)) {
+                        Node temp = Limited_DFS(neighbour, goal, limit - 1, loop_avoidance_list);
+                        if (temp != null) {
+                            return temp;
+                        }
                     }
                 }
             }
         }
+        loop_avoidance_list.remove(current);
 
         return null;
-    }
-
-    @Override
-    public void checkTilePuzzle(TilePuzzle tp) {
-        double start = System.nanoTime();
-        if (checkIfPathExist(tp.getRoot(), tp.getGoal())) {
-            path = Path.buildPath(path);
-        } else {
-            path = "no path";
-            price = 0;
-            nodes_amount = 0;
-        }
-        double finish = System.nanoTime();
-        time = finish - start;
-        double second = 1000000000;
-        time /= second;
-    }
-
-    @Override
-    public String getPath() {
-        return path;
-    }
-
-    @Override
-    public int getPrice() {
-        return price;
-    }
-
-    @Override
-    public int getNodesAmount() {
-        return nodes_amount;
-    }
-
-    @Override
-    public String getTime() {
-        return Utils.round(time) + " seconds";
     }
 }

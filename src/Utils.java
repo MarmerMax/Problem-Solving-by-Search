@@ -31,6 +31,16 @@ public class Utils {
 //        return false;
 //    }
 
+    //get the node that have same matrix
+    public static Node getSameNode(Node node, Set<Node> set) {
+        for (Node temp : set) {
+            if (Matrix.isEqualsMatrices(node.getMatrix(), temp.getMatrix())) {
+                return temp;
+            }
+        }
+        return null;
+    }
+
     //Check if node exists in set (open list or closed list) by checking the matrix only.
     //Default contains methods of set will return false because it check similarity by all variables of object.
     //In my implementation of Node all Node store not only matrix so if two matrices will have
@@ -105,7 +115,7 @@ public class Utils {
                     all_steps[temp] = steps;
 
                     //if the actual number signed as red then multiply steps by 30
-                    if(red_numbers != null && red_numbers.contains(temp)){
+                    if (red_numbers != null && red_numbers.contains(temp)) {
                         steps *= TilePuzzle.RED_PRICE;
                     }
 

@@ -69,25 +69,8 @@ public class TilePuzzle {
         return true;
     }
 
-    //create all neighbors of node
-    public static ArrayList<Node> createNodeNeighbours(Node node) {
-        ArrayList<Node> neighbours = new ArrayList<>();
-
-        Node left = createNeighbourByActionForNode(node, 'L');
-        Node up = createNeighbourByActionForNode(node, 'U');
-        Node right = createNeighbourByActionForNode(node, 'R');
-        Node down = createNeighbourByActionForNode(node, 'D');
-
-        if (left != null) neighbours.add(left);
-        if (up != null) neighbours.add(up);
-        if (right != null) neighbours.add(right);
-        if (down != null) neighbours.add(down);
-
-        return neighbours;
-    }
-
     //create neighbour by actual action of moving
-    private static Node createNeighbourByActionForNode(Node node, char action) {
+    public static Node createNeighbourByActionForNode(Node node, char action) {
         int[] place = node.getSpaceIndexes();
         int row = place[0];
         int column = place[1];

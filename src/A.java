@@ -2,21 +2,9 @@ import java.util.*;
 
 public class A extends Algorithm {
 
-    private int price;
-    private int nodes_amount;
-    private String path;
-    private double time = 0;
-
-    private Queue<Node> queue;
 
     public A() {
-        Comparator<Node> comparator = new Comparator<Node>() {
-            @Override
-            public int compare(Node n1, Node n2) {
-                return (n1.getPrice() + n1.getHeuristicPrice()) - (n2.getPrice() + n2.getHeuristicPrice());
-            }
-        };
-        queue = new PriorityQueue<>(comparator);
+        super();
     }
 
     /**
@@ -36,17 +24,15 @@ public class A extends Algorithm {
      * 4. Return false
      */
 
-    private boolean checkIfPathExist(Node start, Node goal) {
-        if (TilePuzzle.isGoal(start, goal)) {
-            path = "";
-            return true;
-        }
-
-        //check if black numbers not in right place
-        if (!TilePuzzle.isPathExist(start)) {
-            return false;
-        }
-
+    @Override
+    public boolean checkIfPathExist(Node start, Node goal) {
+        Comparator<Node> comparator = new Comparator<Node>() {
+            @Override
+            public int compare(Node n1, Node n2) {
+                return (n1.getPrice() + n1.getHeuristicPrice()) - (n2.getPrice() + n2.getHeuristicPrice());
+            }
+        };
+        Queue<Node> queue = new PriorityQueue<>(comparator);
         Set<Node> openList = new HashSet<>();
         Set<Node> closedList = new HashSet<>();
 
@@ -58,65 +44,30 @@ public class A extends Algorithm {
             Node current = queue.poll();
             openList.remove(current);
 
-            if (TilePuzzle.isGoal(current, goal)) {
-                path = current.getName();
-                price = current.getPrice();
+            if(isGoal(current, goal)){
                 return true;
             }
 
             closedList.add(current);
 
-            ArrayList<Node> neighbours = TilePuzzle.createNodeNeighbours(current);
-            nodes_amount += neighbours.size();
+            char[] actions = {'L', 'U', 'R', 'D'};
 
-            for (Node neighbour : neighbours) {
-                if (!Utils.checkIfNodeExistsInList(neighbour, openList)
-                        && !Utils.checkIfNodeExistsInList(neighbour, closedList)) {
+            for (char action : actions) {
+                Node neighbour = TilePuzzle.createNeighbourByActionForNode(current, action);
+                if (neighbour != null) {
+                    nodes_amount++;
+                    if (!Utils.checkIfNodeExistsInList(neighbour, openList)
+                            && !Utils.checkIfNodeExistsInList(neighbour, closedList)) {
 
-                    queue.add(neighbour);
-                    openList.add(neighbour);
+                        queue.add(neighbour);
+                        openList.add(neighbour);
 
-                } else if (Utils.checkIfNodeExistsInList(neighbour, openList)) {
-                    queue = Utils.changeBetweenNodesInQueue(queue, openList, neighbour);
+                    } else if (Utils.checkIfNodeExistsInList(neighbour, openList)) {
+                        queue = Utils.changeBetweenNodesInQueue(queue, openList, neighbour);
+                    }
                 }
             }
         }
         return false;
-    }
-
-    @Override
-    public void checkTilePuzzle(TilePuzzle tp) {
-        double start = System.nanoTime();
-        if (checkIfPathExist(tp.getRoot(), tp.getGoal())) {
-            path = Path.buildPath(path);
-        } else {
-            path = "no path";
-            price = 0;
-            nodes_amount = 0;
-        }
-        double finish = System.nanoTime();
-        time = finish - start;
-        double second = 1000000000;
-        time /= second;
-    }
-
-    @Override
-    public String getPath() {
-        return path;
-    }
-
-    @Override
-    public int getPrice() {
-        return price;
-    }
-
-    @Override
-    public int getNodesAmount() {
-        return nodes_amount;
-    }
-
-    @Override
-    public String getTime() {
-        return Utils.round(time) + "seconds";
     }
 }
