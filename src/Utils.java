@@ -1,8 +1,5 @@
 import java.lang.reflect.Array;
-import java.util.Comparator;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class Utils {
 
@@ -16,20 +13,6 @@ public class Utils {
         long tmp = Math.round(value);
         return (double) tmp / factor;
     }
-
-//    public static boolean checkIfNodeExistsInOpenOrClosed(Node node, Set<Node> set1, Set<Node> set2) {
-//        for (Node temp : set1) {
-//            if (Matrix.isEqualsMatrices(node.getMatrix(), temp.getMatrix())) {
-//                return true;
-//            }
-//        }
-//        for (Node temp : set2) {
-//            if (Matrix.isEqualsMatrices(node.getMatrix(), temp.getMatrix())) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
     //get the node that have same matrix
     public static Node getSameNode(Node node, Set<Node> set) {
@@ -87,7 +70,7 @@ public class Utils {
     }
 
 
-    //This function calculates the steps that the algorithm must take to change the matrix to the correct state
+    //This function calculates the steps that the algorithm must do for change the matrix to the correct state
     public static int manhattanFunction(int[][] actual, Set<Integer> red_numbers) {
 
         //array with steps to each number (can be useful in feature)

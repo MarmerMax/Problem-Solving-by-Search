@@ -1,6 +1,4 @@
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Stack;
 
 public class Ex1 {
@@ -12,10 +10,11 @@ public class Ex1 {
 
         TilePuzzle tilePuzzle = inputReader.getTilePuzzle();
 
-        Algorithm algorithm = inputReader.getAlgorithm();
+//        Algorithm algorithm = inputReader.getAlgorithm();
 //        Algorithm algorithm = new A();
 //        Algorithm algorithm = new DFID();
 //        Algorithm algorithm = new IDA();
+        Algorithm algorithm = new DFBnB();
         algorithm.checkTilePuzzle(tilePuzzle);
 
         System.out.println("Path: " + algorithm.getPath());
@@ -24,8 +23,8 @@ public class Ex1 {
         System.out.println("Time: " + algorithm.getTime());
 
 
-        OutputWriter outputWriter = new OutputWriter(inputReader);
-        outputWriter.writeResult(algorithm);
+//        OutputWriter outputWriter = new OutputWriter(inputReader);
+//        outputWriter.writeResult(algorithm);
 
     }
 }

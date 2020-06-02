@@ -30,7 +30,7 @@ public class Node {
         for (int i = 0; i < matrix.length; i++) {
             System.out.println(Arrays.toString(matrix[i]));
         }
-        System.out.println("______________________");
+        System.out.println("________"+ price +"_________" + heuristic_price);
     }
 
     public int[][] getMatrix() {

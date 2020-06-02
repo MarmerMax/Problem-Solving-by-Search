@@ -50,7 +50,7 @@ public class IDA extends Algorithm {
 
         while (threshold != Integer.MAX_VALUE) {
 
-            int min_f = Integer.MAX_VALUE;
+            int min_price = Integer.MAX_VALUE;
 
             stack.add(start);
             loop_avoidance_list.add(start);
@@ -81,21 +81,26 @@ public class IDA extends Algorithm {
                             int neighbour_total_price = neighbour.getPrice() + neighbour.getHeuristicPrice();
 
                             if (neighbour_total_price > threshold) {
-                                min_f = Math.min(min_f, neighbour_total_price);
-                                add_to_stack = false;
-                            } else if (Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list) && neighbour.getOut()) {
+
+                                min_price = Math.min(min_price, neighbour_total_price);
                                 //continue with next neighbour
                                 add_to_stack = false;
-                            } else if (Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list) && !neighbour.getOut()) {
+
+                            } else if (Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list)) {
 
                                 Node same_node = Utils.getSameNode(neighbour, loop_avoidance_list);
                                 int same_node_total_price = same_node.getPrice() + same_node.getHeuristicPrice();
 
-                                if (same_node_total_price > neighbour_total_price) {
-                                    loop_avoidance_list.remove(same_node);
-                                } else {
+                                if (same_node.getOut()) {
                                     //continue with next neighbour
                                     add_to_stack = false;
+                                } else {
+                                    if (same_node_total_price > neighbour_total_price) {
+                                        loop_avoidance_list.remove(same_node);
+                                    } else {
+                                        //continue with next neighbour
+                                        add_to_stack = false;
+                                    }
                                 }
                             }
 
@@ -111,7 +116,7 @@ public class IDA extends Algorithm {
                     }
                 }
             }
-            threshold = min_f;
+            threshold = min_price;
         }
         return false;
     }
