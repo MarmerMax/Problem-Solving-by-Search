@@ -41,13 +41,13 @@ public class DFBnB extends Algorithm {
     protected boolean checkIfPathExist(Node start, Node goal) {
         boolean result = false;
 
-        //create stack for nodes and hash set for checking loop avoidance
+        //create stack for nodes
         Stack<Node> stack = new Stack<>();
         stack.add(start);
 
+        //create hash set for checking loop avoidance
         Set<Node> loop_avoidance_list = new HashSet<>();
         loop_avoidance_list.add(start);
-
 
         int threshold = Integer.MAX_VALUE;
 
@@ -125,6 +125,7 @@ public class DFBnB extends Algorithm {
                         result = true;
                         threshold = neighbour_total_price;
                         neighbours.clear();
+//                        return result;
                     }
 
                 }

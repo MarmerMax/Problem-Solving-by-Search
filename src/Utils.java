@@ -4,6 +4,7 @@ import java.util.*;
 public class Utils {
 
     //return number with only 3 digits after dot (example: 0.1023423 -> 0.102)
+    //for illustrate time
     public static double round(double value) {
         int places = 3;
         if (places < 0) throw new IllegalArgumentException();

@@ -7,7 +7,7 @@ public abstract class Algorithm {
 
     public Algorithm() {
         price = 0;
-        nodes_amount = 1;
+        nodes_amount = 1; //start node
         path = "no path";
         time = 0;
     }

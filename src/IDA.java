@@ -67,7 +67,7 @@ public class IDA extends Algorithm {
 
                     current.markAsOut();
                     stack.add(current);
-                    loop_avoidance_list.add(current);
+//                    loop_avoidance_list.add(current);
 
                     char[] actions = {'L', 'U', 'R', 'D'};
 
@@ -86,7 +86,9 @@ public class IDA extends Algorithm {
                                 //continue with next neighbour
                                 add_to_stack = false;
 
-                            } else if (Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list)) {
+                            }
+
+                            if (Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list)) {
 
                                 Node same_node = Utils.getSameNode(neighbour, loop_avoidance_list);
                                 int same_node_total_price = same_node.getPrice() + same_node.getHeuristicPrice();
@@ -94,8 +96,10 @@ public class IDA extends Algorithm {
                                 if (same_node.getOut()) {
                                     //continue with next neighbour
                                     add_to_stack = false;
+
                                 } else {
                                     if (same_node_total_price > neighbour_total_price) {
+                                        stack.remove(same_node);
                                         loop_avoidance_list.remove(same_node);
                                     } else {
                                         //continue with next neighbour

@@ -26,11 +26,11 @@ public class Node {
 
     public void print() {
         System.out.println("name: " + name);
-//        System.out.println("price: " + price);
+        System.out.println("price: "+ price +", heuristic price: " + heuristic_price);
         for (int i = 0; i < matrix.length; i++) {
             System.out.println(Arrays.toString(matrix[i]));
         }
-        System.out.println("________"+ price +"_________" + heuristic_price);
+        System.out.println("___________________________");
     }
 
     public int[][] getMatrix() {
