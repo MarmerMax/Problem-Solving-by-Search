@@ -125,4 +125,10 @@ public class Utils {
 
         return neighbours;
     }
+
+    public static void pintList(Set<Node> list){
+        for (Node node : list){
+            node.print();
+        }
+    }
 }

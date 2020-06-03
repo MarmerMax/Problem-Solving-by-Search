@@ -43,8 +43,6 @@ public class DFID extends Algorithm {
             Set<Node> loop_avoidance_list = new HashSet<>();
             Node temp = Limited_DFS(start, goal, depth, loop_avoidance_list);
             if (temp != null) {
-                path = temp.getName();
-                price = temp.getPrice();
                 return true;
             }
         }
@@ -52,7 +50,7 @@ public class DFID extends Algorithm {
     }
 
     private Node Limited_DFS(Node current, Node goal, int limit, Set<Node> loop_avoidance_list) {
-        if (Matrix.isEqualsMatrices(current.getMatrix(), goal.getMatrix())) {
+        if (isGoal(current, goal)) {
             return current;
         } else if (limit == 0) {
             return null;

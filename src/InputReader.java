@@ -72,6 +72,9 @@ public class InputReader {
 
     //create numbers set from the line
     private Set<Integer> numbersFromLine(String line) {
+        if(line.trim().equals("")){
+            return null;
+        }
         String[] numbers = line.split(",");
         Set<Integer> set = new HashSet<>();
         for (int i = 0; i < numbers.length; i++) {
