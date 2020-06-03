@@ -111,4 +111,18 @@ public class Utils {
         return distance;
 
     }
+
+    //create all available neighbours of node
+    public static ArrayList<Node> createNeighboursOfNode(Node current, char [] actions){
+        ArrayList<Node> neighbours = new ArrayList<>();
+
+        for (char action : actions) {
+            Node neighbour = TilePuzzle.createNeighbourByActionForNode(current, action);
+            if (neighbour != null) {
+                neighbours.add(neighbour);
+            }
+        }
+
+        return neighbours;
+    }
 }

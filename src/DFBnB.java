@@ -25,10 +25,10 @@ public class DFBnB extends Algorithm {
      *              2. Else If H contains g’=g and g’ is marked as “out”
      *                  1. remove g from N
      *              3. Else If H contains g’=g and g’ is not marked as “out”
-     *                  1. If f(g’)<=f(g)
-     *                      1. remove g from N
-     *                  2. Else
+     *                  1. If f(g’)>f(g)
      *                      1. remove g’ from L and from H
+     *                  2. Else
+     *                      1. remove g from N
      *              4. Else If goal(g) // if we reached here, f(g) < t
      *                  1. t  f(g)
      *                  2. result  path(g) // all the “out” nodes in L
@@ -39,7 +39,6 @@ public class DFBnB extends Algorithm {
 
     @Override
     protected boolean checkIfPathExist(Node start, Node goal) {
-        boolean result = false;
 
         //create stack for nodes
         Stack<Node> stack = new Stack<>();
@@ -50,6 +49,8 @@ public class DFBnB extends Algorithm {
         loop_avoidance_list.add(start);
 
         int threshold = Integer.MAX_VALUE;
+        boolean result = false;
+
 
         while (!stack.empty()) {
 
@@ -63,31 +64,22 @@ public class DFBnB extends Algorithm {
 
                 current.markAsOut();
                 stack.add(current);
-                loop_avoidance_list.add(current);
 
-                //create array list for neighbours
-                ArrayList<Node> neighbours = new ArrayList();
-
-                //create comparator for nodes sorting
-                Comparator<Node> comparator = new Comparator<Node>() {
-                    @Override
-                    public int compare(Node n1, Node n2) {
-                        return (n1.getPrice() + n1.getHeuristicPrice()) - (n2.getPrice() + n2.getHeuristicPrice());
-                    }
-                };
-
+                //create array list of neighbours for current node by actions
                 char[] actions = {'L', 'U', 'R', 'D'};
-
-                for (char action : actions) {
-                    Node neighbour = TilePuzzle.createNeighbourByActionForNode(current, action);
-                    if (neighbour != null) {
-                        neighbours.add(neighbour);
-                    }
-                }
+                ArrayList<Node> neighbours = Utils.createNeighboursOfNode(current, actions);
 
                 nodes_amount += neighbours.size();
 
-                //sort by price
+                //create a comparator that sorts nodes by total price
+                Comparator<Node> comparator = new Comparator<Node>() {
+                    @Override
+                    public int compare(Node n1, Node n2) {
+                        return n1.getTotalPrice() - n2.getTotalPrice();
+                    }
+                };
+
+                //if there are more than one neighbours then sort them by price
                 if (neighbours.size() > 1) {
                     neighbours.sort(comparator);
                 }
@@ -96,36 +88,40 @@ public class DFBnB extends Algorithm {
 
                     Node neighbour = neighbours.get(i);
 
-                    int neighbour_total_price = neighbour.getPrice() + neighbour.getHeuristicPrice();
+                    int neighbour_total_price = neighbour.getTotalPrice();
 
                     if (neighbour_total_price >= threshold) {
 
-                        neighbours.clear();
+                        while (i < neighbours.size()) {
+                            neighbours.remove(i);
+                        }
 
                     } else if (Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list)) {
 
                         Node same_node = Utils.getSameNode(neighbour, loop_avoidance_list);
+
                         if (same_node.getOut()) {
                             neighbours.remove(neighbour);
                             i--;
                         } else {
 
-                            int same_node_total_price = same_node.getPrice() + same_node.getHeuristicPrice();
+                            int same_node_total_price = same_node.getTotalPrice();
 
-                            if (same_node_total_price <= neighbour_total_price) {
-                                neighbours.remove(neighbour);
-                                i--;
-                            } else {
+                            if (same_node_total_price > neighbour_total_price) {
                                 stack.remove(same_node);
                                 loop_avoidance_list.remove(same_node);
+                            } else {
+                                neighbours.remove(neighbour);
+                                i--;
                             }
+
                         }
 
                     } else if (isGoal(neighbour, goal)) {
+//                        System.out.println("price: " + price + " -> " + path.substring(1));
                         result = true;
                         threshold = neighbour_total_price;
                         neighbours.clear();
-//                        return result;
                     }
 
                 }

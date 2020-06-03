@@ -36,7 +36,7 @@ public class IDA extends Algorithm {
      *                          1. continue with the next operator
      *                  4. If goal(g) then return path(g) //all the “out” nodes in L
      *                  5. L.insert(g) and H.insert(g)
-     *          4. t  minF
+     *      4. t  minF
      * 4. Return false
      */
 
@@ -67,7 +67,6 @@ public class IDA extends Algorithm {
 
                     current.markAsOut();
                     stack.add(current);
-//                    loop_avoidance_list.add(current);
 
                     char[] actions = {'L', 'U', 'R', 'D'};
 
@@ -76,40 +75,39 @@ public class IDA extends Algorithm {
 
                         if (neighbour != null) {
                             nodes_amount++;
-                            boolean add_to_stack = true;
+                            boolean continue_with_next = false;
 
-                            int neighbour_total_price = neighbour.getPrice() + neighbour.getHeuristicPrice();
+                            int neighbour_total_price = neighbour.getTotalPrice();
 
                             if (neighbour_total_price > threshold) {
 
                                 min_price = Math.min(min_price, neighbour_total_price);
-                                //continue with next neighbour
-                                add_to_stack = false;
+                                continue_with_next = true;
 
                             }
 
-                            if (Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list)) {
+                            if (Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list) && !continue_with_next) {
 
                                 Node same_node = Utils.getSameNode(neighbour, loop_avoidance_list);
-                                int same_node_total_price = same_node.getPrice() + same_node.getHeuristicPrice();
 
                                 if (same_node.getOut()) {
-                                    //continue with next neighbour
-                                    add_to_stack = false;
+                                    continue_with_next = true;
 
                                 } else {
+
+                                    int same_node_total_price = same_node.getTotalPrice();
+
                                     if (same_node_total_price > neighbour_total_price) {
                                         stack.remove(same_node);
                                         loop_avoidance_list.remove(same_node);
                                     } else {
-                                        //continue with next neighbour
-                                        add_to_stack = false;
+                                        continue_with_next = true;
                                     }
                                 }
                             }
 
                             //if this node has lower or equal price to threshold and does not exists in stack
-                            if (add_to_stack) {
+                            if (!continue_with_next) {
                                 if (isGoal(neighbour, goal)) {
                                     return true;
                                 }
@@ -121,6 +119,7 @@ public class IDA extends Algorithm {
                 }
             }
             threshold = min_price;
+            start.markAsNotOut();
         }
         return false;
     }

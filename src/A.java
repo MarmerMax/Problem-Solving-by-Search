@@ -29,7 +29,7 @@ public class A extends Algorithm {
         Comparator<Node> comparator = new Comparator<Node>() {
             @Override
             public int compare(Node n1, Node n2) {
-                return (n1.getPrice() + n1.getHeuristicPrice()) - (n2.getPrice() + n2.getHeuristicPrice());
+                return n1.getTotalPrice() - n2.getTotalPrice();
             }
         };
         Queue<Node> queue = new PriorityQueue<>(comparator);

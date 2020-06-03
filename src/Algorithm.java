@@ -1,7 +1,7 @@
 public abstract class Algorithm {
 
     protected int price;
-    protected int nodes_amount;
+    protected long nodes_amount;
     protected String path;
     protected double time;
 
@@ -39,7 +39,7 @@ public abstract class Algorithm {
         return price;
     }
 
-    public int getNodesAmount() {
+    public long getNodesAmount() {
         return nodes_amount;
     }
 
