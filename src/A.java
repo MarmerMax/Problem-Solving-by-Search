@@ -2,7 +2,6 @@ import java.util.*;
 
 public class A extends Algorithm {
 
-
     public A() {
         super();
     }
@@ -33,22 +32,26 @@ public class A extends Algorithm {
             }
         };
         Queue<Node> queue = new PriorityQueue<>(comparator);
-        Set<Node> openList = new HashSet<>();
-        Set<Node> closedList = new HashSet<>();
+        Set<Node> open_list = new HashSet<>();
+        Set<Node> close_list = new HashSet<>();
 
         queue.add(start);
-        openList.add(start);
+        open_list.add(start);
 
         while (!queue.isEmpty()) {
 
-            Node current = queue.poll();
-            openList.remove(current);
+            if (with_open) {
+                Utils.pintList(open_list);
+            }
 
-            if(isGoal(current, goal)){
+            Node current = queue.poll();
+            open_list.remove(current);
+
+            if (isGoal(current, goal)) {
                 return true;
             }
 
-            closedList.add(current);
+            close_list.add(current);
 
             char[] actions = {'L', 'U', 'R', 'D'};
 
@@ -56,14 +59,16 @@ public class A extends Algorithm {
                 Node neighbour = TilePuzzle.createNeighbourByActionForNode(current, action);
                 if (neighbour != null) {
                     nodes_amount++;
-                    if (!Utils.checkIfNodeExistsInList(neighbour, openList)
-                            && !Utils.checkIfNodeExistsInList(neighbour, closedList)) {
+                    if (!Utils.checkIfNodeExistsInList(neighbour, open_list)
+                            && !Utils.checkIfNodeExistsInList(neighbour, close_list)) {
 
                         queue.add(neighbour);
-                        openList.add(neighbour);
+                        open_list.add(neighbour);
 
-                    } else if (Utils.checkIfNodeExistsInList(neighbour, openList)) {
-                        queue = Utils.changeBetweenNodesInQueue(queue, openList, neighbour);
+                    } else if (Utils.checkIfNodeExistsInList(neighbour, open_list)) {
+
+                        Utils.changeBetweenNodesInQueue(queue, open_list, neighbour);
+
                     }
                 }
             }

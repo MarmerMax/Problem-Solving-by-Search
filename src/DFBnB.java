@@ -54,6 +54,10 @@ public class DFBnB extends Algorithm {
 
         while (!stack.empty()) {
 
+            if (with_open) {
+                Utils.pintList(loop_avoidance_list);
+            }
+
             Node current = stack.pop();
 
             if (current.getOut()) {
@@ -65,9 +69,9 @@ public class DFBnB extends Algorithm {
                 current.markAsOut();
                 stack.add(current);
 
-                //create array list of neighbours for current node by actions
+                //create all available neighbours for the current node
                 char[] actions = {'L', 'U', 'R', 'D'};
-                ArrayList<Node> neighbours = Utils.createNeighboursOfNode(current, actions);
+                ArrayList<Node> neighbours = TilePuzzle.createNeighboursOfNode(current, actions);
 
                 nodes_amount += neighbours.size();
 
@@ -79,7 +83,7 @@ public class DFBnB extends Algorithm {
                     }
                 };
 
-                //if there are more than one neighbours then sort them by price
+                //if there is more than one neighbor, sort them by price
                 if (neighbours.size() > 1) {
                     neighbours.sort(comparator);
                 }
@@ -118,7 +122,6 @@ public class DFBnB extends Algorithm {
                         }
 
                     } else if (isGoal(neighbour, goal)) {
-//                        System.out.println("price: " + price + " -> " + path.substring(1));
                         result = true;
                         threshold = neighbour_total_price;
                         neighbours.clear();

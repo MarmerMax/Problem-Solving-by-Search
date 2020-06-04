@@ -2,7 +2,6 @@ import java.util.*;
 
 public class BFS extends Algorithm {
 
-
     public BFS() {
         super();
     }
@@ -32,6 +31,10 @@ public class BFS extends Algorithm {
         openList.add(start);
 
         while (!queue.isEmpty()) {
+
+            if (with_open) {
+                Utils.pintList(openList);
+            }
 
             Node current = queue.poll();
             openList.remove(current);

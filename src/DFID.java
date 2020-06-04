@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,10 +63,15 @@ public class DFID extends Algorithm {
 
                 Node neighbour = TilePuzzle.createNeighbourByActionForNode(current, action);
 
-                if(neighbour != null){
+                if (neighbour != null) {
                     nodes_amount++;
 
                     if (!Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list)) {
+
+                        if (with_open) {
+                            neighbour.print();
+                        }
+
                         Node temp = Limited_DFS(neighbour, goal, limit - 1, loop_avoidance_list);
                         if (temp != null) {
                             return temp;

@@ -1,3 +1,9 @@
+/**
+ * An abstract class for all algorithms.
+ * Each algorithm should implement only one function - checkIfPathExist (start, target).
+ * Other functions are common to all algorithms.
+ */
+
 public abstract class Algorithm {
 
     protected int price;
@@ -17,6 +23,12 @@ public abstract class Algorithm {
 
     protected abstract boolean checkIfPathExist(Node start, Node goal);
 
+    /**
+     * This function checks if there is a solution for a given tile puzzle.
+     *
+     * @param tp  - a tile puzzle that needs to be checked
+     * @param w_o - a boolean that determines whether to print an open list
+     */
     public void checkTilePuzzle(TilePuzzle tp, boolean w_o) {
         with_open = w_o;
         if (TilePuzzle.isGoal(tp.getRoot(), tp.getGoal())) { //check if the start state equals to the goal state
@@ -25,9 +37,10 @@ public abstract class Algorithm {
             return;
         } else {
             double start = System.nanoTime();
-            if (checkIfPathExist(tp.getRoot(), tp.getGoal())) {
-                path = path.substring(1);
-            }
+
+            //injection point of the algorithm
+            checkIfPathExist(tp.getRoot(), tp.getGoal());
+
             double finish = System.nanoTime();
             time = finish - start;
             double second = 1000000000;
@@ -58,7 +71,7 @@ public abstract class Algorithm {
     protected boolean isGoal(Node current, Node target) {
         if (Matrix.isEqualsMatrices(current.getMatrix(), target.getMatrix())) {
             is_path_exist = true;
-            path = current.getName();
+            path = current.getName().substring(1);
             price = current.getPrice();
             return true;
         }

@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.Stack;
-
 public class Ex1 {
 
     public static void main(String[] args) {
@@ -13,6 +10,7 @@ public class Ex1 {
 //        Algorithm algorithm = new DFID();
 //        Algorithm algorithm = new IDA();
 //        Algorithm algorithm = new DFBnB();
+
         algorithm.checkTilePuzzle(tilePuzzle, inputReader.getWithOpen());
 
 //        System.out.println("Path: " + algorithm.getPath());
@@ -23,7 +21,5 @@ public class Ex1 {
 
         OutputWriter outputWriter = new OutputWriter(inputReader);
         outputWriter.writeResult(algorithm);
-
-
     }
 }

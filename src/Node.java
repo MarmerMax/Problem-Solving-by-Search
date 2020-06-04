@@ -10,6 +10,8 @@ public class Node {
     private boolean out;
 
     /**
+     * Constructor arguments list:
+     *
      * @param m  - initial matrix for Node
      * @param p  - price of action
      * @param n  - name (actual path to this node)
@@ -21,12 +23,12 @@ public class Node {
         heuristic_price = Utils.manhattanFunction(m, rn);
         name = n;
         out = false;
-//        print();
     }
 
     public void print() {
         System.out.println("name: " + name);
-        System.out.println("price: "+ price +", heuristic price: " + heuristic_price);
+        System.out.println("price: " + price);
+        System.out.println("heuristic price: " + heuristic_price);
         for (int i = 0; i < matrix.length; i++) {
             System.out.println(Arrays.toString(matrix[i]));
         }
@@ -49,7 +51,7 @@ public class Node {
         return heuristic_price;
     }
 
-    public int getTotalPrice(){
+    public int getTotalPrice() {
         return price + heuristic_price;
     }
 
@@ -63,18 +65,5 @@ public class Node {
 
     public boolean getOut() {
         return out;
-    }
-
-    //find place of space
-    public int[] getSpaceIndexes() {
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[0].length; j++) {
-                if (matrix[i][j] == -1) {
-                    int[] ans = {i, j};
-                    return ans;
-                }
-            }
-        }
-        return null;
     }
 }

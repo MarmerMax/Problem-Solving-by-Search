@@ -1,5 +1,9 @@
 import java.util.*;
 
+/**
+ * Class for representation Tile puzzle game
+ */
+
 public class TilePuzzle {
 
     public static final int RED_PRICE = 30;
@@ -10,7 +14,7 @@ public class TilePuzzle {
     private Node goal;
 
     public TilePuzzle(int[][] matrix, Set<Integer> bn, Set<Integer> rn) {
-        int[][] correct_puzzle = createCorrectPuzzle(matrix);
+        int[][] correct_puzzle = Matrix.createCorrectTilePuzzle(matrix);
 
         black_numbers = bn;
         red_numbers = rn;
@@ -31,25 +35,7 @@ public class TilePuzzle {
         return goal;
     }
 
-    //create goal matrix
-    private int[][] createCorrectPuzzle(int[][] mat) {
-        int rows = mat.length;
-        int columns = mat[0].length;
-        int[][] matrix = new int[rows][columns];
-        int num = 1;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                if ((i + 1) * (j + 1) == rows * columns) {
-                    matrix[i][j] = -1;
-                } else {
-                    matrix[i][j] = num++;
-                }
-            }
-        }
-        return matrix;
-    }
-
-    //if exists a black number that is not in its row or column then there is no solution
+    //if there is a black number that is out of place, then there is no solution
     public static boolean isPathExist(Node node) {
         if (black_numbers == null) {
             return true;
@@ -69,9 +55,23 @@ public class TilePuzzle {
         return true;
     }
 
+    //create all available neighbours of node
+    public static ArrayList<Node> createNeighboursOfNode(Node current, char[] actions) {
+        ArrayList<Node> neighbours = new ArrayList<>();
+
+        for (char action : actions) {
+            Node neighbour = createNeighbourByActionForNode(current, action);
+            if (neighbour != null) {
+                neighbours.add(neighbour);
+            }
+        }
+
+        return neighbours;
+    }
+
     //create neighbour by actual action of moving
     public static Node createNeighbourByActionForNode(Node node, char action) {
-        int[] place = node.getSpaceIndexes();
+        int[] place = Matrix.getSpaceIndexes(node.getMatrix());
         int row = place[0];
         int column = place[1];
 
@@ -79,8 +79,8 @@ public class TilePuzzle {
             return null;
         }
 
-        int temp_row = row;
-        int temp_column = column;
+        int new_row = row;
+        int new_column = column;
         char step = 'n';
 
         //check if the step is available and does not contradict to previous step
@@ -90,7 +90,7 @@ public class TilePuzzle {
                     return null;
                 }
                 step = 'L';
-                temp_column += 1;
+                new_column += 1;
                 break;
             }
             case 'U': {
@@ -98,7 +98,7 @@ public class TilePuzzle {
                     return null;
                 }
                 step = 'U';
-                temp_row += 1;
+                new_row += 1;
                 break;
             }
             case 'R': {
@@ -106,7 +106,7 @@ public class TilePuzzle {
                     return null;
                 }
                 step = 'R';
-                temp_column -= 1;
+                new_column -= 1;
                 break;
             }
             case 'D': {
@@ -114,7 +114,7 @@ public class TilePuzzle {
                     return null;
                 }
                 step = 'D';
-                temp_row -= 1;
+                new_row -= 1;
                 break;
             }
             default: {
@@ -123,21 +123,21 @@ public class TilePuzzle {
         }
 
         //if number that function have to move is black return null
-        if (black_numbers != null && black_numbers.contains(node.getMatrix()[temp_row][temp_column])) {
+        if (black_numbers != null && black_numbers.contains(node.getMatrix()[new_row][new_column])) {
             return null;
         }
 
         int price = 1;
         //check price of moved number
-        if (red_numbers != null && red_numbers.contains(node.getMatrix()[temp_row][temp_column])) {
+        if (red_numbers != null && red_numbers.contains(node.getMatrix()[new_row][new_column])) {
             price = 30;
         }
 
         //create matrix with moved space (matrix with moved number)
-        int[][] new_matrix = Matrix.swap(node.getMatrix(), row, column, temp_row, temp_column);
+        int[][] new_matrix = Matrix.swap(node.getMatrix(), row, column, new_row, new_column);
 
         //choose number that was moved
-        int num = node.getMatrix()[temp_row][temp_column];
+        int num = node.getMatrix()[new_row][new_column];
 
         //create new node with new matrix, actual price and name
         Node temp = new Node(new_matrix, node.getPrice() + price, node.getName() + "-" + num + Character.toString(step), red_numbers);

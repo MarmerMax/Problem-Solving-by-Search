@@ -1,10 +1,9 @@
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Utils {
 
     //return number with only 3 digits after dot (example: 0.1023423 -> 0.102)
-    //for illustrate time
+    //for time illustration
     public static double round(double value) {
         int places = 3;
         if (places < 0) throw new IllegalArgumentException();
@@ -39,37 +38,22 @@ public class Utils {
         return false;
     }
 
-    //Check if queue contains node with higher price and change it by cheaper node
-    public static Queue<Node> changeBetweenNodesInQueue(Queue<Node> queue, Set<Node> open_list, Node node) {
-        int size = queue.size();
+    //Check if the queue contains the same node with the higher price then change it by cheaper node
+    public static void changeBetweenNodesInQueue(Queue<Node> queue, Set<Node> open_list, Node node) {
+        for (Node temp : queue) {
+            if (Matrix.isEqualsMatrices(temp.getMatrix(), node.getMatrix())) {
+                if (temp.getTotalPrice() > node.getTotalPrice()) {
 
-        Queue<Node> new_queue = new PriorityQueue<>(new Comparator<Node>() {
-            @Override
-            public int compare(Node n1, Node n2) {
-                return (n1.getPrice() + n1.getHeuristicPrice()) - (n2.getPrice() + n2.getHeuristicPrice());
+                    queue.remove(temp);             //remove expensive node from priority queue
+                    open_list.remove(temp);         //remove expensive node from open list
+
+                    queue.add(node);                //add cheap node to priority queue
+                    open_list.add(node);            //add cheap node to open list
+                }
+                break;
             }
-        });
-
-        //move all nodes to a new queue and switch to the best price
-        while (size > 0) {
-            Node temp = queue.poll();
-
-            //check if the node has cheaper price than the exists similar node
-            if (Matrix.isEqualsMatrices(node.getMatrix(), temp.getMatrix())
-                    && temp.getPrice() > node.getPrice()) {
-
-                open_list.remove(temp);       //remove expensive node from open list
-                open_list.add(node);          //add cheap node to open list
-                new_queue.add(node);          //add cheap node to priority queue
-
-            } else {
-                new_queue.add(temp);
-            }
-            size--;
         }
-        return new_queue;
     }
-
 
     //This function calculates the steps that the algorithm must do for change the matrix to the correct state
     public static int manhattanFunction(int[][] actual, Set<Integer> red_numbers) {
@@ -112,23 +96,12 @@ public class Utils {
 
     }
 
-    //create all available neighbours of node
-    public static ArrayList<Node> createNeighboursOfNode(Node current, char [] actions){
-        ArrayList<Node> neighbours = new ArrayList<>();
-
-        for (char action : actions) {
-            Node neighbour = TilePuzzle.createNeighbourByActionForNode(current, action);
-            if (neighbour != null) {
-                neighbours.add(neighbour);
+    //print all nodes of list
+    public static void pintList(Set<Node> list) {
+        for (Node node : list) {
+            if (!node.getOut()) {
+                node.print();
             }
-        }
-
-        return neighbours;
-    }
-
-    public static void pintList(Set<Node> list){
-        for (Node node : list){
-            node.print();
         }
     }
 }

@@ -1,3 +1,4 @@
+import javax.rmi.CORBA.Util;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -57,6 +58,10 @@ public class IDA extends Algorithm {
 
             while (!stack.empty()) {
 
+                if (with_open) {
+                    Utils.pintList(loop_avoidance_list);
+                }
+
                 Node current = stack.pop();
 
                 if (current.getOut()) {
@@ -86,8 +91,10 @@ public class IDA extends Algorithm {
 
                             }
 
+                            //if not continue with the next operator and neighbour already exists in loop avoidance list
                             if (Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list) && !continue_with_next) {
 
+                                //get same node
                                 Node same_node = Utils.getSameNode(neighbour, loop_avoidance_list);
 
                                 if (same_node.getOut()) {
