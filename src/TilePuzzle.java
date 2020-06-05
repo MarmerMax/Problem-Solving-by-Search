@@ -12,6 +12,7 @@ public class TilePuzzle {
     private static Set<Integer> red_numbers;
     private Node root;
     private Node goal;
+    private int max_steps;
 
     public TilePuzzle(int[][] matrix, Set<Integer> bn, Set<Integer> rn) {
         int[][] correct_puzzle = Matrix.createCorrectTilePuzzle(matrix);
@@ -20,9 +21,20 @@ public class TilePuzzle {
         red_numbers = rn;
         root = new Node(matrix, 0, "", red_numbers);
         goal = new Node(correct_puzzle, 0, "", red_numbers);
+        max_steps = calculateMaxStepsAmount(matrix);
     }
 
+    //calculate maximum steps of algorithm
+    private int calculateMaxStepsAmount(int[][] matrix) {
+        int matrix_cell_amount = matrix.length * matrix[0].length;
+        if (black_numbers != null) {
+            int black_list_size = black_numbers.size();
+            return Utils.factorial(matrix_cell_amount - black_list_size);
+        }
+        return Utils.factorial(matrix_cell_amount);
+    }
 
+    //if the start state is the goal state
     public static boolean isGoal(Node node, Node target) {
         return Matrix.isEqualsMatrices(node.getMatrix(), target.getMatrix());
     }
@@ -142,5 +154,9 @@ public class TilePuzzle {
         //create new node with new matrix, actual price and name
         Node temp = new Node(new_matrix, node.getPrice() + price, node.getName() + "-" + num + Character.toString(step), red_numbers);
         return temp;
+    }
+
+    public int getMax_steps() {
+        return max_steps;
     }
 }

@@ -106,7 +106,7 @@ public class InputReader {
     private boolean openFromLine() {
         String open = input_list.get(3);
         if (!OPEN_LIST.contains(open)) {
-            throw new RuntimeException("Bad time option input...");
+            throw new RuntimeException("Bad open option input...");
         }
 
         return open.equals("with open");

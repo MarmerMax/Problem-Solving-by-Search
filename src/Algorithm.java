@@ -12,6 +12,7 @@ public abstract class Algorithm {
     protected double time;
     protected boolean is_path_exist;
     protected boolean with_open;
+    protected int max_steps;
 
     public Algorithm() {
         price = 0;
@@ -19,6 +20,7 @@ public abstract class Algorithm {
         path = "no path";
         time = 0;
         is_path_exist = false;
+        max_steps = 0;
     }
 
     protected abstract boolean checkIfPathExist(Node start, Node goal);
@@ -31,6 +33,8 @@ public abstract class Algorithm {
      */
     public void checkTilePuzzle(TilePuzzle tp, boolean w_o) {
         with_open = w_o;
+        max_steps = tp.getMax_steps(); //used only in the DFBnB algorithm
+
         if (TilePuzzle.isGoal(tp.getRoot(), tp.getGoal())) { //check if the start state equals to the goal state
             return;
         } else if (!TilePuzzle.isPathExist(tp.getRoot())) { //check if black numbers not in right place
@@ -46,6 +50,17 @@ public abstract class Algorithm {
             double second = 1000000000;
             time /= second;
         }
+    }
+
+    //if current node is the target node then update path, price...
+    protected boolean isGoal(Node current, Node target) {
+        if (Matrix.isEqualsMatrices(current.getMatrix(), target.getMatrix())) {
+            is_path_exist = true;
+            path = current.getName().substring(1);
+            price = current.getPrice();
+            return true;
+        }
+        return false;
     }
 
     public String getPath() {
@@ -66,15 +81,5 @@ public abstract class Algorithm {
 
     public String getTime() {
         return Utils.round(time) + " seconds";
-    }
-
-    protected boolean isGoal(Node current, Node target) {
-        if (Matrix.isEqualsMatrices(current.getMatrix(), target.getMatrix())) {
-            is_path_exist = true;
-            path = current.getName().substring(1);
-            price = current.getPrice();
-            return true;
-        }
-        return false;
     }
 }
