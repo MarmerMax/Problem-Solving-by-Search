@@ -48,8 +48,8 @@ public class DFBnB extends Algorithm {
         Set<Node> loop_avoidance_list = new HashSet<>();
         loop_avoidance_list.add(start);
 
-//        int threshold = Math.min(Integer.MAX_VALUE, max_steps);
-        int threshold = Integer.MAX_VALUE;
+        int threshold = Math.min(Integer.MAX_VALUE, max_steps);
+//        int threshold = Integer.MAX_VALUE;
         boolean result = false;
 
 

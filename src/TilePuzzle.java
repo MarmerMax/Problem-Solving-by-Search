@@ -24,14 +24,14 @@ public class TilePuzzle {
         max_steps = calculateMaxStepsAmount(matrix);
     }
 
-    //calculate maximum steps of algorithm
+    //calculate maximum steps of algorithm for DFBnB
     private int calculateMaxStepsAmount(int[][] matrix) {
-        int matrix_cell_amount = matrix.length * matrix[0].length;
+        int matrix_cells_amount = matrix.length * matrix[0].length;
         if (black_numbers != null) {
             int black_list_size = black_numbers.size();
-            return Utils.factorial(matrix_cell_amount - black_list_size);
+            return Utils.factorial(matrix_cells_amount - black_list_size);
         }
-        return Utils.factorial(matrix_cell_amount);
+        return Utils.factorial(matrix_cells_amount);
     }
 
     //if the start state is the goal state

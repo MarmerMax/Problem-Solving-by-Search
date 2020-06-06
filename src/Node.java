@@ -26,7 +26,12 @@ public class Node {
     }
 
     public void print() {
-        System.out.println("name: " + name);
+        String temp_name = name;
+        if(name.length() > 0){
+            temp_name = temp_name.substring(1);
+        }
+
+        System.out.println("name: " + temp_name);
         System.out.println("price: " + price);
         System.out.println("heuristic price: " + heuristic_price);
         for (int i = 0; i < matrix.length; i++) {

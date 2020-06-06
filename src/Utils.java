@@ -105,6 +105,7 @@ public class Utils {
         }
     }
 
+    //factorial of n
     public static int factorial(int n) {
         int result = 1;
         while (n > 0) {
