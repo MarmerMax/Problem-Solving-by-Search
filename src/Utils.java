@@ -55,7 +55,7 @@ public class Utils {
         }
     }
 
-    //This function calculates the steps that the algorithm must do for change the matrix to the correct state
+    //This function calculates all steps that the algorithm must to do for changing the matrix to the correct state
     public static int manhattanFunction(int[][] actual, Set<Integer> red_numbers) {
 
         //array with steps to each number (can be useful in feature)
@@ -107,6 +107,10 @@ public class Utils {
 
     //factorial of n
     public static int factorial(int n) {
+        if (n < 0) {
+            throw new RuntimeException("Can not calculate factorial of the negative number...");
+        }
+
         int result = 1;
         while (n > 0) {
             result *= n;

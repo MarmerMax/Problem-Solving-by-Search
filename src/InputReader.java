@@ -94,7 +94,7 @@ public class InputReader {
 
     //check the time mode from input file
     private boolean timeFromLine() {
-        String with = input_list.get(2);
+        String with = input_list.get(2).trim();
         if (!TIME_LIST.contains(with)) {
             throw new RuntimeException("Bad time option input...");
         }
@@ -104,7 +104,7 @@ public class InputReader {
 
     //check the open mode from input file
     private boolean openFromLine() {
-        String open = input_list.get(3);
+        String open = input_list.get(3).trim();
         if (!OPEN_LIST.contains(open)) {
             throw new RuntimeException("Bad open option input...");
         }

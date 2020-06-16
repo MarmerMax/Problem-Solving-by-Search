@@ -6,6 +6,7 @@ public class Ex1 {
 
         TilePuzzle tilePuzzle = inputReader.getTilePuzzle();
         Algorithm algorithm = inputReader.getAlgorithm();
+
 //        Algorithm algorithm = new A();
 //        Algorithm algorithm = new DFID();
 //        Algorithm algorithm = new IDA();
