@@ -37,13 +37,13 @@ public abstract class Algorithm {
 
         if (TilePuzzle.isGoal(tp.getRoot(), tp.getGoal())) { //check if the start state equals to the goal state
             return;
-        } else if (!TilePuzzle.isPathExist(tp.getRoot())) { //check if black numbers not in right place
+        } else if (!tp.getIsPathExist()) { //check if black numbers not in right place
             return;
         } else {
             double start = System.nanoTime();
 
-            //injection point of the algorithm
-            checkIfPathExist(tp.getRoot(), tp.getGoal());
+            //injection point of the algorithm -> for each algorithm will be the different implementation
+            boolean answer = checkIfPathExist(tp.getRoot(), tp.getGoal());
 
             double finish = System.nanoTime();
             time = finish - start;

@@ -1,4 +1,3 @@
-import javax.rmi.CORBA.Util;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -76,30 +75,27 @@ public class IDA extends Algorithm {
                     char[] actions = {'L', 'U', 'R', 'D'};
 
                     for (char action : actions) {
-                        Node neighbour = TilePuzzle.createNeighbourByActionForNode(current, action);
+                        Node neighbour = TilePuzzle.createNeighbourForNodeByAction(current, action);
 
                         if (neighbour != null) {
                             nodes_amount++;
-                            boolean continue_with_next = false;
 
                             int neighbour_total_price = neighbour.getTotalPrice();
 
                             if (neighbour_total_price > threshold) {
 
                                 min_price = Math.min(min_price, neighbour_total_price);
-                                continue_with_next = true;
-
+                                continue;
                             }
 
                             //if not continue with the next operator and neighbour already exists in loop avoidance list
-                            if (Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list) && !continue_with_next) {
+                            if (Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list)) {
 
                                 //get same node
                                 Node same_node = Utils.getSameNode(neighbour, loop_avoidance_list);
 
                                 if (same_node.getOut()) {
-                                    continue_with_next = true;
-
+                                    continue;
                                 } else {
 
                                     int same_node_total_price = same_node.getTotalPrice();
@@ -108,19 +104,18 @@ public class IDA extends Algorithm {
                                         stack.remove(same_node);
                                         loop_avoidance_list.remove(same_node);
                                     } else {
-                                        continue_with_next = true;
+                                        continue;
                                     }
                                 }
                             }
 
                             //if this node has lower or equal price to threshold and does not exists in stack
-                            if (!continue_with_next) {
-                                if (isGoal(neighbour, goal)) {
-                                    return true;
-                                }
-                                stack.add(neighbour);
-                                loop_avoidance_list.add(neighbour);
+                            //then check if is goal node
+                            if (isGoal(neighbour, goal)) {
+                                return true;
                             }
+                            stack.add(neighbour);
+                            loop_avoidance_list.add(neighbour);
                         }
                     }
                 }

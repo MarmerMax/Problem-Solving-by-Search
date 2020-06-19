@@ -56,7 +56,7 @@ public class A extends Algorithm {
             char[] actions = {'L', 'U', 'R', 'D'};
 
             for (char action : actions) {
-                Node neighbour = TilePuzzle.createNeighbourByActionForNode(current, action);
+                Node neighbour = TilePuzzle.createNeighbourForNodeByAction(current, action);
                 if (neighbour != null) {
                     nodes_amount++;
                     if (!Utils.checkIfNodeExistsInList(neighbour, open_list)

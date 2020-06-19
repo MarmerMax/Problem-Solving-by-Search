@@ -2,25 +2,22 @@ public class Ex1 {
 
     public static void main(String[] args) {
 
+        //object for reading the input file
         InputReader inputReader = new InputReader("input.txt");
 
+        //get tile puzzle from input reader
         TilePuzzle tilePuzzle = inputReader.getTilePuzzle();
+
+        //get algorithm from input reader
         Algorithm algorithm = inputReader.getAlgorithm();
 
-//        Algorithm algorithm = new A();
-//        Algorithm algorithm = new DFID();
-//        Algorithm algorithm = new IDA();
-//        Algorithm algorithm = new DFBnB();
-
+        //start the algorithm on the given tile puzzle and send the with-open option
         algorithm.checkTilePuzzle(tilePuzzle, inputReader.getWithOpen());
 
-//        System.out.println("Path: " + algorithm.getPath());
-//        System.out.println("Nodes: " + algorithm.getNodesAmount());
-//        System.out.println("Cost: " + algorithm.getPrice());
-//        System.out.println("Time: " + algorithm.getTime());
-
-
+        //create object for output
         OutputWriter outputWriter = new OutputWriter(inputReader);
+
+        //write results of algorithm
         outputWriter.writeResult(algorithm);
     }
 }

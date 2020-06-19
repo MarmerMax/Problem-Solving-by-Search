@@ -13,6 +13,7 @@ public class TilePuzzle {
     private Node root;
     private Node goal;
     private int max_steps;
+    private boolean is_path_exist;
 
     public TilePuzzle(int[][] matrix, Set<Integer> bn, Set<Integer> rn) {
         int[][] correct_puzzle = Matrix.createCorrectTilePuzzle(matrix);
@@ -22,6 +23,7 @@ public class TilePuzzle {
         root = new Node(matrix, 0, "", red_numbers);
         goal = new Node(correct_puzzle, 0, "", red_numbers);
         max_steps = calculateMaxStepsAmount(matrix);
+        is_path_exist = isPathExist(matrix);
     }
 
     //calculate maximum steps of algorithm for DFBnB
@@ -48,31 +50,26 @@ public class TilePuzzle {
     }
 
     //if there is a black number that is out of place, then there is no solution
-    public static boolean isPathExist(Node node) {
+    public static boolean isPathExist(int[][] matrix) {
         if (black_numbers == null) {
             return true;
         }
         for (int temp : black_numbers) {
-            for (int i = 0; i < node.getMatrix().length; i++) {
-                for (int j = 0; j < node.getMatrix()[0].length; j++) {
-                    int goal_row = (temp - 1) / node.getMatrix()[0].length;
-                    int goal_column = (temp - 1) % node.getMatrix()[0].length;
-                    int steps = Math.abs(goal_column - j) + Math.abs(goal_row - i);
-                    if (steps > 0) {
-                        return false;
-                    }
-                }
+            int goal_row = (temp - 1) / matrix[0].length;
+            int goal_column = (temp - 1) % matrix[0].length;
+            if (matrix[goal_row][goal_column] != temp) {
+                return false;
             }
         }
         return true;
     }
 
-    //create all available neighbours of node
+    //create all available neighbours of node (use only in DFBnB)
     public static ArrayList<Node> createNeighboursOfNode(Node current, char[] actions) {
         ArrayList<Node> neighbours = new ArrayList<>();
 
         for (char action : actions) {
-            Node neighbour = createNeighbourByActionForNode(current, action);
+            Node neighbour = createNeighbourForNodeByAction(current, action);
             if (neighbour != null) {
                 neighbours.add(neighbour);
             }
@@ -82,7 +79,7 @@ public class TilePuzzle {
     }
 
     //create neighbour by actual action of moving
-    public static Node createNeighbourByActionForNode(Node node, char action) {
+    public static Node createNeighbourForNodeByAction(Node node, char action) {
         int[] place = Matrix.getSpaceIndexes(node.getMatrix());
         int row = place[0];
         int column = place[1];
@@ -158,5 +155,9 @@ public class TilePuzzle {
 
     public int getMax_steps() {
         return max_steps;
+    }
+
+    public boolean getIsPathExist() {
+        return is_path_exist;
     }
 }

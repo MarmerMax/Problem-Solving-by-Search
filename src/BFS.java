@@ -24,39 +24,39 @@ public class BFS extends Algorithm {
     @Override
     protected boolean checkIfPathExist(Node start, Node goal) {
         Queue<Node> queue = new ArrayDeque<>();
-        Set<Node> openList = new HashSet<>();
-        Set<Node> closedList = new HashSet<>();
+        Set<Node> open_list = new HashSet<>();
+        Set<Node> closed_list = new HashSet<>();
 
         queue.add(start);
-        openList.add(start);
+        open_list.add(start);
 
         while (!queue.isEmpty()) {
 
             if (with_open) {
-                Utils.pintList(openList);
+                Utils.pintList(closed_list);
             }
 
             Node current = queue.poll();
-            openList.remove(current);
-            closedList.add(current);
+            open_list.remove(current);
+            closed_list.add(current);
 
             char[] actions = {'L', 'U', 'R', 'D'};
 
             for (char action : actions) {
 
-                Node neighbour = TilePuzzle.createNeighbourByActionForNode(current, action);
+                Node neighbour = TilePuzzle.createNeighbourForNodeByAction(current, action);
 
                 if (neighbour != null) {
                     nodes_amount++;
 
-                    if (!closedList.contains(neighbour) && !openList.contains(neighbour)) {
+                    if (!Utils.checkIfNodeExistsInList(neighbour, open_list) && !Utils.checkIfNodeExistsInList(neighbour, closed_list)) {
 
                         if (isGoal(neighbour, goal)) {
                             return true;
                         }
 
                         queue.add(neighbour);
-                        openList.add(neighbour);
+                        open_list.add(neighbour);
                     }
                 }
             }

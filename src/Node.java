@@ -1,7 +1,7 @@
 import java.util.Arrays;
 import java.util.Set;
 
-public class Node {
+public class Node{
 
     private int[][] matrix;
     private int price;
@@ -27,7 +27,7 @@ public class Node {
 
     public void print() {
         String temp_name = name;
-        if(name.length() > 0){
+        if (name.length() > 0) {
             temp_name = temp_name.substring(1);
         }
 
@@ -70,5 +70,26 @@ public class Node {
 
     public boolean getOut() {
         return out;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+        Node other = (Node) obj;
+
+        return Matrix.isEqualsMatrices(matrix, other.getMatrix());
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((matrix == null) ? 0 : matrix.hashCode());
+        return result;
     }
 }

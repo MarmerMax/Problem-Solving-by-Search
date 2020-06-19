@@ -37,6 +37,7 @@ public class DFBnB extends Algorithm {
      * 4. Return result
      */
 
+
     @Override
     protected boolean checkIfPathExist(Node start, Node goal) {
 
@@ -76,16 +77,15 @@ public class DFBnB extends Algorithm {
 
                 nodes_amount += neighbours.size();
 
-                //create a comparator that sorts nodes by total price
-                Comparator<Node> comparator = new Comparator<Node>() {
-                    @Override
-                    public int compare(Node n1, Node n2) {
-                        return n1.getTotalPrice() - n2.getTotalPrice();
-                    }
-                };
-
                 //if there is more than one neighbor, sort them by price
                 if (neighbours.size() > 1) {
+                    //create a comparator that sorts nodes by total price
+                    Comparator<Node> comparator = new Comparator<Node>() {
+                        @Override
+                        public int compare(Node n1, Node n2) {
+                            return n1.getTotalPrice() - n2.getTotalPrice();
+                        }
+                    };
                     neighbours.sort(comparator);
                 }
 
@@ -95,11 +95,10 @@ public class DFBnB extends Algorithm {
 
                     int neighbour_total_price = neighbour.getTotalPrice();
 
+                    //if cheapest neighbour has price higher than threshold then remove all nodes from neighbours
                     if (neighbour_total_price >= threshold) {
 
-                        while (i < neighbours.size()) {
-                            neighbours.remove(i);
-                        }
+                        neighbours.clear();
 
                     } else if (Utils.checkIfNodeExistsInList(neighbour, loop_avoidance_list)) {
 
